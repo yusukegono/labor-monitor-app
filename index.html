@@ -534,8 +534,11 @@ function calcWorkedHours(p) {
   if (start === null) return 0;
   const now = new Date();
   const nowMin = now.getHours() * 60 + now.getMinutes();
-  const elapsed = Math.max(0, nowMin - start);
-  // 全非オペ時間（休憩＋ミーティング＋育成＋エクスペリエンス＋クレリネス）を除外
+  // 退社予定時刻が設定されており、現在時刻がそれを過ぎていれば退社予定時刻で打ち止め
+  const endMin = (p.end && timeToMinutes(p.end) !== null) ? timeToMinutes(p.end) : null;
+  const effectiveNow = (endMin !== null && nowMin > endMin) ? endMin : nowMin;
+  const elapsed = Math.max(0, effectiveNow - start);
+  // 全非オペ時間（休憩＋ミーティング＋育成＋エクスペリエンス＋クレリネス＋マネジメント）を除外
   const nonOpe = (p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0) + (p.managementMin || 0);
   return Math.max(0, elapsed - nonOpe) / 60;
 }
