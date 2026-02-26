@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Labor Monitor — SBCJ</title>
+<title>Labor Monitor</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -248,7 +248,7 @@ animation: slideUp 0.2s ease;
         <div class="store-name" id="hdr-store" onclick="showTab('setup')" style="cursor:pointer;" title="タップして店舗名を変更">Labor Monitor</div>
         <span id="hdr-store-tag" style="display:none;background:rgba(0,168,98,0.2);border:1px solid var(--green);border-radius:20px;padding:2px 10px;font-size:0.65rem;color:var(--green-bright);font-weight:700;"></span>
       </div>
-      <div class="store-sub">Starbucks Japan — <span class="live-badge"><span class="live-dot"></span>LIVE</span></div>
+      <div class="store-sub"><span class="live-badge"><span class="live-dot"></span>LIVE</span></div>
     </div>
   </div>
   <div class="clock-box">
@@ -420,7 +420,7 @@ animation: slideUp 0.2s ease;
     <div class="row2">
       <div class="field">
         <label>店舗名</label>
-        <input type="text" id="cfg-store" placeholder="例：625 成城店" oninput="saveConfig()">
+        <input type="text" id="cfg-store" placeholder="例：渋谷店、新宿南口店 など" oninput="saveConfig()">
       </div>
       <div class="field">
         <label>デフォルトガイド単価 (円/h)</label>
