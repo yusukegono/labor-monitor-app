@@ -285,12 +285,12 @@ animation: slideUp 0.2s ease;
 
   <div class="metrics-grid">
     <div class="metric-card" id="mc-guide">
-      <div class="metric-label">ガイド時間（営業経過ベース）</div>
+      <div class="metric-label">ガイド時間（適正オペ時間）</div>
       <div class="metric-value" id="val-guide-h">--</div>
       <div class="metric-unit">時間</div>
     </div>
     <div class="metric-card" id="mc-actual">
-      <div class="metric-label">実労働時間（合計）</div>
+      <div class="metric-label">実オペ時間（非オペ除外済）</div>
       <div class="metric-value" id="val-actual-h">0.0</div>
       <div class="metric-unit">時間</div>
     </div>
@@ -305,7 +305,7 @@ animation: slideUp 0.2s ease;
       <div class="metric-unit">時間（＋超過 ／ −余剰）</div>
     </div>
     <div class="metric-card" style="grid-column:1/-1;background:var(--surface2);">
-      <div class="metric-label" style="margin-bottom:10px;">非オペ時間内訳（ガイド対象外）</div>
+      <div class="metric-label" style="margin-bottom:10px;">非オペ時間内訳 — ガイド比計算から除外済み ✓</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;">
         <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-break">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">休憩(h)</div></div>
         <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-meeting">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">MTG(h)</div></div>
@@ -617,6 +617,7 @@ function renderPartners() {
     const wClass = wh >= 8 ? 'warn' : '';
     const row = document.createElement('div');
     row.className = 'partner-row';
+    row.dataset.id = p.id;
     row.innerHTML = `
       <div class="partner-name">${p.name}</div>
       <div class="partner-info">
@@ -631,7 +632,10 @@ function renderPartners() {
           ${makeNonOpeInput(p.id, 'managementMin', 'MGT', p.managementMin)}
         </div>
       </div>
-      <div class="partner-hours ${wClass}">${wh.toFixed(2)}h</div>
+      <div class="partner-hours ${wClass}">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;">${wh.toFixed(2)}h</span><br>
+        <span style="font-size:0.6rem;color:var(--text-dim);">オペ / 非オペ ${calcNonOpeHours(p).toFixed(2)}h</span>
+      </div>
       <button class="edit-btn" onclick="openEditModal(${p.id})">✏️ 編集</button>
       <button class="remove-btn" onclick="removePartner(${p.id})">退勤</button>
     `;
@@ -710,14 +714,15 @@ function onBizTimeChange() {
 // ============================================================
 function updatePartnerHoursOnly() {
   const rows = document.querySelectorAll('.partner-row');
-  rows.forEach((row, i) => {
-    if (!partners[i]) return;
-    const p = partners[i];
+  rows.forEach(row => {
+    const id = parseInt(row.dataset.id);
+    const p = partners.find(x => x.id === id);
+    if (!p) return;
     const wh = calcWorkedHours(p);
+    const nonOpe = calcNonOpeHours(p);
     const hoursEl = row.querySelector('.partner-hours');
     if (hoursEl) {
-      hoursEl.textContent = wh.toFixed(2) + 'h';
-      hoursEl.className = 'partner-hours' + (wh >= 8 ? ' warn' : '');
+      hoursEl.innerHTML = `<span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:${wh >= 8 ? 'var(--orange)' : 'var(--green-bright)'};">${wh.toFixed(2)}h</span><br><span style="font-size:0.6rem;color:var(--text-dim);">オペ / 非オペ ${nonOpe.toFixed(2)}h</span>`;
     }
   });
 }
