@@ -172,16 +172,28 @@ border:1.5px solid;
 /* ===== EDIT MODAL ===== */
 .modal-overlay {
 display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
-z-index:200; align-items:center; justify-content:center; padding:20px;
+z-index:200; align-items:flex-start; justify-content:center;
+padding:16px; overflow-y:auto;
 }
 .modal-overlay.open { display:flex; }
 .modal {
 background:var(–surface); border:1px solid var(–border); border-radius:16px;
-padding:24px; width:100%; max-width:420px;
+width:100%; max-width:420px; margin:auto;
+display:flex; flex-direction:column;
 animation: slideUp 0.2s ease;
 }
+.modal-body {
+padding:24px 24px 0 24px;
+}
+.modal-footer {
+padding:16px 24px 24px 24px;
+position:sticky; bottom:0;
+background:var(–surface);
+border-top:1px solid var(–border);
+border-radius:0 0 16px 16px;
+}
 @keyframes slideUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-.modal-title { font-size:0.88rem; font-weight:700; color:var(–green-bright); margin-bottom:18px; letter-spacing:0.05em; }
+.modal-title { font-size:0.88rem; font-weight:700; color:var(–green-bright); margin-bottom:14px; letter-spacing:0.05em; }
 .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
 .modal-actions { display:flex; gap:10px; }
 .btn-save { background:var(–green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
@@ -1034,6 +1046,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
+    <div class="modal-body">
     <div class="modal-title">✏️ パートナー情報を編集</div>
     <input type="hidden" id="edit-id">
     <div class="modal-grid">
@@ -1074,10 +1087,13 @@ window.addEventListener('DOMContentLoaded', () => {
         <input type="number" id="edit-management" min="0" max="480" inputmode="numeric">
       </div>
     </div>
+    </div><!-- /.modal-body -->
+    <div class="modal-footer">
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
       <button class="btn-save" onclick="saveEdit()">保存する</button>
     </div>
+    </div><!-- /.modal-footer -->
   </div>
 </div>
 
