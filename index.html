@@ -244,8 +244,11 @@ animation: slideUp 0.2s ease;
       </svg>
     </div>
     <div>
-      <div class="store-name" id="hdr-store">625 成城店</div>
-      <div class="store-sub">Labor Monitor <span class="live-badge"><span class="live-dot"></span>LIVE</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="store-name" id="hdr-store" onclick="showTab('setup')" style="cursor:pointer;" title="タップして店舗名を変更">Labor Monitor</div>
+        <span id="hdr-store-tag" style="display:none;background:rgba(0,168,98,0.2);border:1px solid var(--green);border-radius:20px;padding:2px 10px;font-size:0.65rem;color:var(--green-bright);font-weight:700;"></span>
+      </div>
+      <div class="store-sub">Starbucks Japan — <span class="live-badge"><span class="live-dot"></span>LIVE</span></div>
     </div>
   </div>
   <div class="clock-box">
@@ -264,6 +267,12 @@ animation: slideUp 0.2s ease;
 <!-- ========== MONITOR PAGE ========== -->
 
 <div class="page active" id="page-monitor">
+
+  <!-- 店舗未設定バナー -->
+
+  <div id="store-setup-banner" style="display:none;border-radius:10px;padding:12px 16px;margin-bottom:12px;background:#1A2D1A;border:1.5px solid var(--green);color:var(--green-bright);font-size:0.82rem;font-weight:500;cursor:pointer;" onclick="showTab('setup')">
+    ⚙️ まず店舗名を設定しましょう → <u>設定タブをタップ</u>
+  </div>
 
   <!-- 営業時間ステータスバー -->
 
@@ -407,11 +416,11 @@ animation: slideUp 0.2s ease;
 
 <div class="page" id="page-setup">
   <div class="card">
-    <div class="card-title">店舗設定</div>
+    <div class="card-title">🏪 店舗設定（全国どの店舗でも使えます）</div>
     <div class="row2">
       <div class="field">
         <label>店舗名</label>
-        <input type="text" id="cfg-store" value="625 成城店" oninput="saveConfig()">
+        <input type="text" id="cfg-store" placeholder="例：625 成城店" oninput="saveConfig()">
       </div>
       <div class="field">
         <label>デフォルトガイド単価 (円/h)</label>
@@ -461,7 +470,7 @@ animation: slideUp 0.2s ease;
 let partners = [];
 let history = [];
 let config = {
-  store: '625 成城店',
+  store: '',
   defaultGuide: 7665,
   warnLine: 105,
   dangerLine: 115,
@@ -920,10 +929,23 @@ function saveConfig() {
   config.warnLine = parseFloat(document.getElementById('cfg-warn').value) || 105;
   config.dangerLine = parseFloat(document.getElementById('cfg-danger').value) || 115;
   config.intervalSec = parseInt(document.getElementById('cfg-interval').value) || 300;
-  document.getElementById('hdr-store').textContent = config.store;
+  updateStoreHeader();
   persist();
   startAutoRefresh();
   refreshMonitor();
+}
+
+function updateStoreHeader() {
+  const tag = document.getElementById('hdr-store-tag');
+  const banner = document.getElementById('store-setup-banner');
+  if (config.store) {
+    tag.textContent = config.store;
+    tag.style.display = 'inline';
+    if (banner) banner.style.display = 'none';
+  } else {
+    tag.style.display = 'none';
+    if (banner) banner.style.display = 'block';
+  }
 }
 
 function exportData() {
@@ -1017,7 +1039,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cfg-warn').value = config.warnLine;
   document.getElementById('cfg-danger').value = config.dangerLine;
   document.getElementById('cfg-interval').value = config.intervalSec;
-  document.getElementById('hdr-store').textContent = config.store;
+  updateStoreHeader();
   document.getElementById('mon-guide').value = config.defaultGuide;
 
   setInterval(updateClock, 1000);
