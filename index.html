@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -24,132 +25,132 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 
 /* ===== HEADER ===== */
 .header {
-  background: linear-gradient(135deg, #0A1A15 0%, #132B23 100%);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 20px 12px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top:0; z-index:100;
+background: linear-gradient(135deg, #0A1A15 0%, #132B23 100%);
+border-bottom: 1px solid var(–border);
+padding: 16px 20px 12px;
+display: flex; align-items: center; justify-content: space-between;
+position: sticky; top:0; z-index:100;
 }
 .header-left { display:flex; align-items:center; gap:12px; }
-.sblogo { width:40px; height:40px; background:var(--green); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.sblogo { width:40px; height:40px; background:var(–green); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .sblogo svg { width:24px; height:24px; }
 .store-name { font-size:1rem; font-weight:700; letter-spacing:0.05em; }
-.store-sub { font-size:0.65rem; color:var(--text-dim); margin-top:1px; }
+.store-sub { font-size:0.65rem; color:var(–text-dim); margin-top:1px; }
 .clock-box { text-align:right; }
-.clock { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--green-bright); letter-spacing:0.05em; line-height:1; }
-.date-str { font-size:0.65rem; color:var(--text-dim); }
+.clock { font-family:‘Bebas Neue’,sans-serif; font-size:2rem; color:var(–green-bright); letter-spacing:0.05em; line-height:1; }
+.date-str { font-size:0.65rem; color:var(–text-dim); }
 
 /* ===== TABS ===== */
-.tabs { display:flex; background:var(--surface); border-bottom:1px solid var(--border); }
-.tab { flex:1; padding:12px 8px; text-align:center; font-size:0.75rem; font-weight:500; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
-.tab.active { color:var(--green-bright); border-bottom-color:var(--green-bright); background:var(--surface2); }
+.tabs { display:flex; background:var(–surface); border-bottom:1px solid var(–border); }
+.tab { flex:1; padding:12px 8px; text-align:center; font-size:0.75rem; font-weight:500; color:var(–text-dim); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
+.tab.active { color:var(–green-bright); border-bottom-color:var(–green-bright); background:var(–surface2); }
 
 /* ===== MAIN ===== */
 .page { display:none; padding:16px; max-width:900px; margin:0 auto; }
 .page.active { display:block; }
 
 /* ===== SETUP CARD ===== */
-.card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:14px; }
-.card-title { font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--green); margin-bottom:14px; }
+.card { background:var(–surface); border:1px solid var(–border); border-radius:14px; padding:18px; margin-bottom:14px; }
+.card-title { font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(–green); margin-bottom:14px; }
 .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-.field label { display:block; font-size:0.72rem; color:var(--text-dim); margin-bottom:5px; }
+.field label { display:block; font-size:0.72rem; color:var(–text-dim); margin-bottom:5px; }
 .field input, .field select {
-  width:100%; background:var(--bg); border:1.5px solid var(--border); border-radius:8px;
-  color:var(--text); font-family:'DM Mono',monospace; font-size:0.9rem;
-  padding:10px 12px; outline:none; transition:border-color 0.2s;
-  -webkit-appearance:none;
+width:100%; background:var(–bg); border:1.5px solid var(–border); border-radius:8px;
+color:var(–text); font-family:‘DM Mono’,monospace; font-size:0.9rem;
+padding:10px 12px; outline:none; transition:border-color 0.2s;
+-webkit-appearance:none;
 }
-.field input:focus, .field select:focus { border-color:var(--green); }
-.field select option { background:var(--bg); }
+.field input:focus, .field select:focus { border-color:var(–green); }
+.field select option { background:var(–bg); }
 
 /* ===== BIG METRICS ===== */
 .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
 .metric-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:14px;
-  padding:16px; text-align:center; position:relative; overflow:hidden;
+background:var(–surface); border:1px solid var(–border); border-radius:14px;
+padding:16px; text-align:center; position:relative; overflow:hidden;
 }
 .metric-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
-  background:var(--green);
+content:’’; position:absolute; top:0; left:0; right:0; height:3px;
+background:var(–green);
 }
-.metric-card.warn::before { background:var(--orange); }
-.metric-card.danger::before { background:var(--red); }
-.metric-card.ok::before { background:var(--green-bright); }
-.metric-label { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
-.metric-value { font-family:'Bebas Neue',sans-serif; font-size:2.8rem; line-height:1; color:var(--green-bright); }
-.metric-value.warn { color:var(--orange); }
-.metric-value.danger { color:var(--red); }
-.metric-unit { font-size:0.7rem; color:var(--text-dim); margin-top:3px; }
+.metric-card.warn::before { background:var(–orange); }
+.metric-card.danger::before { background:var(–red); }
+.metric-card.ok::before { background:var(–green-bright); }
+.metric-label { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(–text-dim); margin-bottom:6px; }
+.metric-value { font-family:‘Bebas Neue’,sans-serif; font-size:2.8rem; line-height:1; color:var(–green-bright); }
+.metric-value.warn { color:var(–orange); }
+.metric-value.danger { color:var(–red); }
+.metric-unit { font-size:0.7rem; color:var(–text-dim); margin-top:3px; }
 
 /* ===== GAUGE ===== */
 .gauge-wrap { margin-bottom:14px; }
-.gauge-header { display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-dim); margin-bottom:6px; }
-.gauge-track { background:var(--surface2); border-radius:20px; height:28px; overflow:hidden; position:relative; border:1px solid var(--border); }
+.gauge-header { display:flex; justify-content:space-between; font-size:0.72rem; color:var(–text-dim); margin-bottom:6px; }
+.gauge-track { background:var(–surface2); border-radius:20px; height:28px; overflow:hidden; position:relative; border:1px solid var(–border); }
 .gauge-fill {
-  height:100%; border-radius:20px; display:flex; align-items:center; justify-content:flex-end;
-  padding-right:12px; transition:width 0.8s cubic-bezier(0.34,1.2,0.64,1), background 0.5s;
-  min-width:2px;
+height:100%; border-radius:20px; display:flex; align-items:center; justify-content:flex-end;
+padding-right:12px; transition:width 0.8s cubic-bezier(0.34,1.2,0.64,1), background 0.5s;
+min-width:2px;
 }
-.gauge-fill span { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:white; }
+.gauge-fill span { font-family:‘Bebas Neue’,sans-serif; font-size:1rem; color:white; }
 .gauge-ticks { display:flex; justify-content:space-between; margin-top:4px; }
-.gauge-tick { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--text-dim); }
+.gauge-tick { font-family:‘DM Mono’,monospace; font-size:0.6rem; color:var(–text-dim); }
 
 /* ===== PARTNER TABLE ===== */
 .partner-list { display:flex; flex-direction:column; gap:8px; }
 .partner-row {
-  background:var(--surface); border:1px solid var(--border); border-radius:10px;
-  padding:12px 14px; display:flex; align-items:center; gap:10px;
+background:var(–surface); border:1px solid var(–border); border-radius:10px;
+padding:12px 14px; display:flex; align-items:center; gap:10px;
 }
 .partner-name { font-weight:500; font-size:0.88rem; min-width:80px; flex-shrink:0; }
 .partner-info { flex:1; display:flex; gap:8px; flex-wrap:wrap; }
-.pinfo { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--text-dim); }
-.pinfo span { color:var(--text); }
-.partner-hours { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; color:var(--green-bright); min-width:52px; text-align:right; }
-.partner-hours.warn { color:var(--orange); }
-.remove-btn { background:none; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); padding:4px 8px; cursor:pointer; font-size:0.7rem; }
-.remove-btn:hover { border-color:var(--red); color:var(--red); }
+.pinfo { font-family:‘DM Mono’,monospace; font-size:0.75rem; color:var(–text-dim); }
+.pinfo span { color:var(–text); }
+.partner-hours { font-family:‘Bebas Neue’,sans-serif; font-size:1.5rem; color:var(–green-bright); min-width:52px; text-align:right; }
+.partner-hours.warn { color:var(–orange); }
+.remove-btn { background:none; border:1px solid var(–border); border-radius:6px; color:var(–text-dim); padding:4px 8px; cursor:pointer; font-size:0.7rem; }
+.remove-btn:hover { border-color:var(–red); color:var(–red); }
 
 /* ===== ADD PARTNER FORM ===== */
-.add-form { background:var(--surface2); border:1px dashed var(--border); border-radius:12px; padding:14px; margin-bottom:14px; }
+.add-form { background:var(–surface2); border:1px dashed var(–border); border-radius:12px; padding:14px; margin-bottom:14px; }
 .add-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
 
 /* ===== BUTTONS ===== */
 .btn {
-  border:none; border-radius:10px; padding:12px 18px;
-  font-family:'Noto Sans JP',sans-serif; font-size:0.85rem; font-weight:700;
-  cursor:pointer; transition:all 0.15s; letter-spacing:0.05em;
+border:none; border-radius:10px; padding:12px 18px;
+font-family:‘Noto Sans JP’,sans-serif; font-size:0.85rem; font-weight:700;
+cursor:pointer; transition:all 0.15s; letter-spacing:0.05em;
 }
-.btn-primary { background:var(--green); color:white; width:100%; }
-.btn-primary:hover { background:var(--green-bright); }
-.btn-small { background:var(--surface2); color:var(--text); border:1px solid var(--border); padding:8px 14px; font-size:0.78rem; }
-.btn-small:hover { border-color:var(--green); color:var(--green-bright); }
-.btn-danger { background:transparent; color:var(--red); border:1px solid var(--red); }
+.btn-primary { background:var(–green); color:white; width:100%; }
+.btn-primary:hover { background:var(–green-bright); }
+.btn-small { background:var(–surface2); color:var(–text); border:1px solid var(–border); padding:8px 14px; font-size:0.78rem; }
+.btn-small:hover { border-color:var(–green); color:var(–green-bright); }
+.btn-danger { background:transparent; color:var(–red); border:1px solid var(–red); }
 .btn-row { display:flex; gap:8px; flex-wrap:wrap; }
 
 /* ===== HISTORY ===== */
 .history-entry {
-  background:var(--surface); border:1px solid var(--border); border-radius:12px;
-  padding:14px; margin-bottom:10px;
+background:var(–surface); border:1px solid var(–border); border-radius:12px;
+padding:14px; margin-bottom:10px;
 }
 .hist-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
 .hist-date { font-weight:700; font-size:0.9rem; }
-.hist-guide { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--text-dim); }
+.hist-guide { font-family:‘DM Mono’,monospace; font-size:0.72rem; color:var(–text-dim); }
 .hist-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
 .hist-metric { text-align:center; }
-.hist-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; }
-.hist-val.ok { color:var(--green-bright); }
-.hist-val.warn { color:var(--orange); }
-.hist-val.danger { color:var(--red); }
-.hist-lbl { font-size:0.6rem; color:var(--text-dim); }
-.delete-hist { background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:0.8rem; padding:4px 8px; }
-.delete-hist:hover { color:var(--red); }
+.hist-val { font-family:‘Bebas Neue’,sans-serif; font-size:1.4rem; }
+.hist-val.ok { color:var(–green-bright); }
+.hist-val.warn { color:var(–orange); }
+.hist-val.danger { color:var(–red); }
+.hist-lbl { font-size:0.6rem; color:var(–text-dim); }
+.delete-hist { background:none; border:none; color:var(–text-dim); cursor:pointer; font-size:0.8rem; padding:4px 8px; }
+.delete-hist:hover { color:var(–red); }
 
 /* ===== VERDICT BANNER ===== */
 .verdict {
-  border-radius:12px; padding:14px 16px; margin-bottom:14px;
-  font-size:0.88rem; font-weight:500; display:flex; gap:10px; align-items:flex-start;
-  border:1.5px solid;
+border-radius:12px; padding:14px 16px; margin-bottom:14px;
+font-size:0.88rem; font-weight:500; display:flex; gap:10px; align-items:flex-start;
+border:1.5px solid;
 }
 .verdict.ok { background:#0D2D1A; border-color:#1A6B3A; color:#5CE88A; }
 .verdict.warn { background:#2D1E00; border-color:#7A5000; color:#FFB020; }
@@ -157,66 +158,67 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 .verdict-icon { font-size:1.3rem; flex-shrink:0; margin-top:-2px; }
 
 /* ===== SAVE SNAPSHOT BTN ===== */
-.save-btn { background:var(--gold); color:#1A1000; font-weight:700; border:none; border-radius:10px; padding:13px; width:100%; font-size:0.9rem; cursor:pointer; margin-top:4px; transition:opacity 0.2s; }
+.save-btn { background:var(–gold); color:#1A1000; font-weight:700; border:none; border-radius:10px; padding:13px; width:100%; font-size:0.9rem; cursor:pointer; margin-top:4px; transition:opacity 0.2s; }
 .save-btn:hover { opacity:0.88; }
 
 /* ===== UPDATE BADGE ===== */
-.live-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.65rem; color:var(--green-bright); background:rgba(0,216,126,0.12); border:1px solid rgba(0,216,126,0.3); border-radius:20px; padding:3px 10px; }
-.live-dot { width:6px; height:6px; background:var(--green-bright); border-radius:50%; animation:pulse 1.5s infinite; }
+.live-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.65rem; color:var(–green-bright); background:rgba(0,216,126,0.12); border:1px solid rgba(0,216,126,0.3); border-radius:20px; padding:3px 10px; }
+.live-dot { width:6px; height:6px; background:var(–green-bright); border-radius:50%; animation:pulse 1.5s infinite; }
 @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
 /* ===== EMPTY STATE ===== */
-.empty { text-align:center; color:var(--text-dim); padding:40px 20px; font-size:0.85rem; }
+.empty { text-align:center; color:var(–text-dim); padding:40px 20px; font-size:0.85rem; }
 
 /* ===== EDIT MODAL ===== */
 .modal-overlay {
-  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
-  z-index:200; align-items:center; justify-content:center; padding:20px;
+display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
+z-index:200; align-items:center; justify-content:center; padding:20px;
 }
 .modal-overlay.open { display:flex; }
 .modal {
-  background:var(--surface); border:1px solid var(--border); border-radius:16px;
-  padding:24px; width:100%; max-width:420px;
-  animation: slideUp 0.2s ease;
+background:var(–surface); border:1px solid var(–border); border-radius:16px;
+padding:24px; width:100%; max-width:420px;
+animation: slideUp 0.2s ease;
 }
 @keyframes slideUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-.modal-title { font-size:0.88rem; font-weight:700; color:var(--green-bright); margin-bottom:18px; letter-spacing:0.05em; }
+.modal-title { font-size:0.88rem; font-weight:700; color:var(–green-bright); margin-bottom:18px; letter-spacing:0.05em; }
 .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
 .modal-actions { display:flex; gap:10px; }
-.btn-save { background:var(--green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:'Noto Sans JP',sans-serif; }
-.btn-save:hover { background:var(--green-bright); }
-.btn-cancel { background:var(--surface2); color:var(--text-dim); border:1px solid var(--border); border-radius:10px; padding:12px; flex:1; font-size:0.88rem; cursor:pointer; font-family:'Noto Sans JP',sans-serif; }
-.edit-btn { background:none; border:1px solid var(--green); border-radius:6px; color:var(--green); padding:4px 8px; cursor:pointer; font-size:0.7rem; flex-shrink:0; }
-.edit-btn:hover { background:var(--green); color:white; }
+.btn-save { background:var(–green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
+.btn-save:hover { background:var(–green-bright); }
+.btn-cancel { background:var(–surface2); color:var(–text-dim); border:1px solid var(–border); border-radius:10px; padding:12px; flex:1; font-size:0.88rem; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
+.edit-btn { background:none; border:1px solid var(–green); border-radius:6px; color:var(–green); padding:4px 8px; cursor:pointer; font-size:0.7rem; flex-shrink:0; }
+.edit-btn:hover { background:var(–green); color:white; }
 
 /* ===== EDIT MODAL ===== */
 .modal-overlay {
-  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
-  z-index:200; align-items:center; justify-content:center; padding:20px;
+display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+z-index:200; align-items:center; justify-content:center; padding:20px;
 }
 .modal-overlay.open { display:flex; }
 .modal {
-  background:var(--surface); border:1px solid var(--border); border-radius:16px;
-  padding:24px; width:100%; max-width:420px;
-  animation: slideUp 0.2s ease;
+background:var(–surface); border:1px solid var(–border); border-radius:16px;
+padding:24px; width:100%; max-width:420px;
+animation: slideUp 0.2s ease;
 }
 @keyframes slideUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-.modal-title { font-size:0.85rem; font-weight:700; color:var(--green-bright); margin-bottom:18px; letter-spacing:0.05em; }
+.modal-title { font-size:0.85rem; font-weight:700; color:var(–green-bright); margin-bottom:18px; letter-spacing:0.05em; }
 .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
 .modal-actions { display:flex; gap:10px; }
-.btn-save { background:var(--green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:'Noto Sans JP',sans-serif; }
-.btn-cancel { background:var(--surface2); color:var(--text-dim); border:1px solid var(--border); border-radius:10px; padding:12px; flex:1; font-size:0.88rem; cursor:pointer; font-family:'Noto Sans JP',sans-serif; }
-.edit-btn { background:none; border:1px solid var(--border); border-radius:6px; color:var(--green); padding:4px 8px; cursor:pointer; font-size:0.7rem; }
-.edit-btn:hover { border-color:var(--green-bright); }
+.btn-save { background:var(–green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
+.btn-cancel { background:var(–surface2); color:var(–text-dim); border:1px solid var(–border); border-radius:10px; padding:12px; flex:1; font-size:0.88rem; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
+.edit-btn { background:none; border:1px solid var(–border); border-radius:6px; color:var(–green); padding:4px 8px; cursor:pointer; font-size:0.7rem; }
+.edit-btn:hover { border-color:var(–green-bright); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 500px) {
-  .metrics-grid { grid-template-columns:1fr 1fr; }
-  .row3 { grid-template-columns:1fr 1fr; }
-  .hist-metrics { grid-template-columns:repeat(2,1fr); }
-  .metric-value { font-size:2.2rem; }
+.metrics-grid { grid-template-columns:1fr 1fr; }
+.row3 { grid-template-columns:1fr 1fr; }
+.hist-metrics { grid-template-columns:repeat(2,1fr); }
+.metric-value { font-size:2.2rem; }
 }
 </style>
+
 </head>
 <body>
 
@@ -248,9 +250,11 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 </div>
 
 <!-- ========== MONITOR PAGE ========== -->
+
 <div class="page active" id="page-monitor">
 
   <!-- 営業時間ステータスバー -->
+
   <div id="biz-status-bar" style="border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:0.82rem;font-weight:500;align-items:center;gap:8px;display:none;"></div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
@@ -308,6 +312,7 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
         <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-training">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">育成(h)</div></div>
         <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-exp">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">EXP(h)</div></div>
         <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-cln">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">CLN(h)</div></div>
+        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-mgt">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">MGT(h)</div></div>
       </div>
     </div>
   </div>
@@ -335,9 +340,9 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
     <div class="card" style="margin:0;">
-      <div class="metric-label" style="margin-bottom:4px;">出勤人数</div>
+      <div class="metric-label" style="margin-bottom:4px;">出勤人数（退勤済含）</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);" id="val-headcount">0</div>
-      <div class="metric-unit">名</div>
+      <div class="metric-unit">名 <span style="font-size:0.65rem;color:var(--text-dim);">退勤済 <span id="val-retired-h">0.0</span>h 加算中</span></div>
     </div>
     <div class="card" style="margin:0;">
       <div class="metric-label" style="margin-bottom:4px;">次回更新まで</div>
@@ -346,10 +351,12 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
     </div>
   </div>
 
-  <button class="save-btn" onclick="saveSnapshot()">📸 この時点のデータを保存</button>
+<button class="save-btn" onclick="saveSnapshot()">📸 この時点のデータを保存</button>
+
 </div>
 
 <!-- ========== PARTNERS PAGE ========== -->
+
 <div class="page" id="page-partners">
 
   <div class="add-form">
@@ -375,13 +382,17 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
     <button class="btn btn-primary" onclick="addPartner()">追加する</button>
   </div>
 
-  <div class="card-title" style="padding:0 4px;margin-bottom:8px;">出勤中パートナー <span id="partner-count" style="color:var(--gold);"></span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
+    <div class="card-title" style="margin:0;">出勤中パートナー <span id="partner-count" style="color:var(--gold);"></span></div>
+    <button onclick="clearAllPartners()" style="background:#2D0D0D;border:1.5px solid var(--red);color:var(--red);border-radius:8px;padding:7px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">🗑 全員削除</button>
+  </div>
   <div class="partner-list" id="partner-list">
     <div class="empty" id="partner-empty">まだ誰も登録されていません</div>
   </div>
 </div>
 
 <!-- ========== SETUP PAGE ========== -->
+
 <div class="page" id="page-setup">
   <div class="card">
     <div class="card-title">店舗設定</div>
@@ -424,6 +435,7 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 </div>
 
 <!-- ========== HISTORY PAGE ========== -->
+
 <div class="page" id="page-history">
   <div id="history-list">
     <div class="empty" id="history-empty">保存されたデータがありません</div>
@@ -446,6 +458,8 @@ let config = {
 // 当日の営業時間（ページリロードで消える一時データ）
 let todayBizOpen = '';
 let todayBizClose = '';
+// 退勤済みパートナーの確定労働時間を蓄積
+let retiredHours = 0;
 let countdownSec = 300;
 let autoTimer = null;
 let countdownTimer = null;
@@ -458,6 +472,7 @@ function persist() {
     localStorage.setItem('sbcj_partners', JSON.stringify(partners));
     localStorage.setItem('sbcj_history', JSON.stringify(history));
     localStorage.setItem('sbcj_config', JSON.stringify(config));
+    localStorage.setItem('sbcj_retiredHours', retiredHours);
   } catch(e) {}
 }
 function load() {
@@ -468,6 +483,8 @@ function load() {
     if (p) partners = JSON.parse(p);
     if (h) history = JSON.parse(h);
     if (c) config = {...config, ...JSON.parse(c)};
+    const r = localStorage.getItem('sbcj_retiredHours');
+    if (r) retiredHours = parseFloat(r) || 0;
   } catch(e) {}
 }
 
@@ -519,14 +536,14 @@ function calcWorkedHours(p) {
   const nowMin = now.getHours() * 60 + now.getMinutes();
   const elapsed = Math.max(0, nowMin - start);
   // 全非オペ時間（休憩＋ミーティング＋育成＋エクスペリエンス＋クレリネス）を除外
-  const nonOpe = (p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0);
+  const nonOpe = (p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0) + (p.managementMin || 0);
   return Math.max(0, elapsed - nonOpe) / 60;
 }
 function calcNonOpeHours(p) {
-  return ((p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0)) / 60;
+  return ((p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0) + (p.managementMin || 0)) / 60;
 }
 function totalWorkedHours() {
-  return partners.reduce((sum, p) => sum + calcWorkedHours(p), 0);
+  return retiredHours + partners.reduce((sum, p) => sum + calcWorkedHours(p), 0);
 }
 
 function addPartner() {
@@ -567,7 +584,21 @@ function updateBreak(id, val) {
   if (p) { p.breakMin = parseInt(val) || 0; persist(); refreshMonitor(); }
 }
 
+function clearAllPartners() {
+  if (!partners.length) { alert('出勤中のパートナーはいません'); return; }
+  if (!confirm(`出勤中の全パートナー（${partners.length}名）を削除しますか？`)) return;
+  partners = [];
+  persist();
+  renderPartners();
+  refreshMonitor();
+}
+
 function removePartner(id) {
+  const p = partners.find(x => x.id === id);
+  if (p) {
+    // 退勤時点の労働時間を確定して蓄積
+    retiredHours += calcWorkedHours(p);
+  }
   partners = partners.filter(x => x.id !== id);
   persist();
   renderPartners();
@@ -597,6 +628,7 @@ function renderPartners() {
           ${makeNonOpeInput(p.id, 'trainingMin', '育成', p.trainingMin)}
           ${makeNonOpeInput(p.id, 'experienceMin', 'EXP', p.experienceMin)}
           ${makeNonOpeInput(p.id, 'cleanlinessMin', 'CLN', p.cleanlinessMin)}
+          ${makeNonOpeInput(p.id, 'managementMin', 'MGT', p.managementMin)}
         </div>
       </div>
       <div class="partner-hours ${wClass}">${wh.toFixed(2)}h</div>
@@ -720,6 +752,7 @@ function refreshMonitor() {
   diffEl.className = 'metric-value ' + (diff > 0 ? 'danger' : 'ok');
 
   document.getElementById('val-headcount').textContent = partners.length;
+  document.getElementById('val-retired-h').textContent = retiredHours.toFixed(2);
 
   // 非オペ時間内訳を集計して表示
   const nonOpeBreak    = partners.reduce((s,p) => s + (p.breakMin||0), 0) / 60;
@@ -732,6 +765,8 @@ function refreshMonitor() {
   document.getElementById('nonope-training').textContent = nonOpeTraining.toFixed(1);
   document.getElementById('nonope-exp').textContent      = nonOpeExp.toFixed(1);
   document.getElementById('nonope-cln').textContent      = nonOpeCln.toFixed(1);
+  const nonOpeMgt = partners.reduce((s,p) => s + (p.managementMin||0), 0) / 60;
+  document.getElementById('nonope-mgt').textContent = nonOpeMgt.toFixed(1);
 
   // Card colors
   ['mc-ratio','mc-diff'].forEach(id => {
@@ -886,6 +921,7 @@ function exportData() {
 function clearToday() {
   if (!confirm('本日のパートナーデータをリセットしますか？')) return;
   partners = [];
+  retiredHours = 0;
   document.getElementById('mon-sales').value = '';
   persist();
   renderPartners();
@@ -894,7 +930,7 @@ function clearToday() {
 
 function clearAll() {
   if (!confirm('全データ（履歴含む）を削除しますか？この操作は元に戻せません。')) return;
-  partners = []; history = [];
+  partners = []; history = []; retiredHours = 0;
   persist();
   renderPartners();
   refreshMonitor();
@@ -916,6 +952,7 @@ function openEditModal(id) {
   document.getElementById('edit-training').value = p.trainingMin || 0;
   document.getElementById('edit-experience').value = p.experienceMin || 0;
   document.getElementById('edit-cleanliness').value = p.cleanlinessMin || 0;
+  document.getElementById('edit-management').value = p.managementMin || 0;
   document.getElementById('edit-modal').classList.add('open');
 }
 
@@ -940,6 +977,7 @@ function saveEdit() {
     p.trainingMin = parseInt(document.getElementById('edit-training').value) || 0;
     p.experienceMin = parseInt(document.getElementById('edit-experience').value) || 0;
     p.cleanlinessMin = parseInt(document.getElementById('edit-cleanliness').value) || 0;
+    p.managementMin = parseInt(document.getElementById('edit-management').value) || 0;
     persist();
     renderPartners();
     updateBizElapsedDisplay();
@@ -983,7 +1021,9 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
 <!-- ========== EDIT MODAL ========== -->
+
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-title">✏️ パートナー情報を編集</div>
@@ -1020,6 +1060,10 @@ window.addEventListener('DOMContentLoaded', () => {
       <div class="field">
         <label>🧹 クレリネス (分)</label>
         <input type="number" id="edit-cleanliness" min="0" max="480" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label>💼 マネジメント (分)</label>
+        <input type="number" id="edit-management" min="0" max="480" inputmode="numeric">
       </div>
     </div>
     <div class="modal-actions">
