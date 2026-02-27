@@ -3,10 +3,17 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Labor Monitor</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0D1F1A">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ==========================================================
+   CSS VARIABLES
+   ========================================================== */
 :root {
   --bg: #0D1F1A;
   --surface: #132B23;
@@ -19,220 +26,311 @@
   --text: #E8F5EE;
   --text-dim: #7AB898;
   --border: #254D3A;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Noto Sans JP', sans-serif;
+  --font-mono: 'DM Mono', monospace;
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body { height:100%; background:var(--bg); color:var(--text); font-family:'Noto Sans JP',sans-serif; overflow-x:hidden; }
 
-/* ===== HEADER ===== */
+/* ==========================================================
+RESET & BASE
+========================================================== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(–bg); color: var(–text); font-family: var(–font-body); overflow-x: hidden; }
+
+/* ==========================================================
+HEADER
+========================================================== */
 .header {
 background: linear-gradient(135deg, #0A1A15 0%, #132B23 100%);
 border-bottom: 1px solid var(–border);
 padding: 16px 20px 12px;
 display: flex; align-items: center; justify-content: space-between;
-position: sticky; top:0; z-index:100;
+position: sticky; top: 0; z-index: 100;
 }
-.header-left { display:flex; align-items:center; gap:12px; }
-.sblogo { width:40px; height:40px; background:var(–green); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.sblogo svg { width:24px; height:24px; }
-.store-name { font-size:1rem; font-weight:700; letter-spacing:0.05em; }
-.store-sub { font-size:0.65rem; color:var(–text-dim); margin-top:1px; }
-.clock-box { text-align:right; }
-.clock { font-family:‘Bebas Neue’,sans-serif; font-size:2rem; color:var(–green-bright); letter-spacing:0.05em; line-height:1; }
-.date-str { font-size:0.65rem; color:var(–text-dim); }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.sblogo {
+width: 40px; height: 40px; background: var(–green); border-radius: 50%;
+display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sblogo svg { width: 24px; height: 24px; }
+.store-name { font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; }
+.store-tag {
+display: none; background: rgba(0,168,98,0.2); border: 1px solid var(–green);
+border-radius: 20px; padding: 2px 10px; font-size: 0.65rem;
+color: var(–green-bright); font-weight: 700;
+}
+.store-tag.visible { display: inline; }
+.clock-box { text-align: right; }
+.clock { font-family: var(–font-display); font-size: 2rem; color: var(–green-bright); letter-spacing: 0.05em; line-height: 1; }
+.date-str { font-size: 0.65rem; color: var(–text-dim); }
 
-/* ===== TABS ===== */
-.tabs { display:flex; background:var(–surface); border-bottom:1px solid var(–border); }
-.tab { flex:1; padding:12px 8px; text-align:center; font-size:0.75rem; font-weight:500; color:var(–text-dim); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
-.tab.active { color:var(–green-bright); border-bottom-color:var(–green-bright); background:var(–surface2); }
+/* Live badge */
+.live-badge {
+display: inline-flex; align-items: center; gap: 5px; font-size: 0.65rem;
+color: var(–green-bright); background: rgba(0,216,126,0.12);
+border: 1px solid rgba(0,216,126,0.3); border-radius: 20px; padding: 3px 10px;
+}
+.live-dot {
+width: 6px; height: 6px; background: var(–green-bright); border-radius: 50%;
+animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
 
-/* ===== MAIN ===== */
-.page { display:none; padding:16px; max-width:900px; margin:0 auto; }
-.page.active { display:block; }
+/* ==========================================================
+TABS
+========================================================== */
+.tabs { display: flex; background: var(–surface); border-bottom: 1px solid var(–border); }
+.tab {
+flex: 1; padding: 12px 8px; text-align: center; font-size: 0.75rem;
+font-weight: 500; color: var(–text-dim); cursor: pointer;
+border-bottom: 2px solid transparent; transition: all 0.2s;
+}
+.tab.active { color: var(–green-bright); border-bottom-color: var(–green-bright); background: var(–surface2); }
 
-/* ===== SETUP CARD ===== */
-.card { background:var(–surface); border:1px solid var(–border); border-radius:14px; padding:18px; margin-bottom:14px; }
-.card-title { font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(–green); margin-bottom:14px; }
-.row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-.field label { display:block; font-size:0.72rem; color:var(–text-dim); margin-bottom:5px; }
+/* ==========================================================
+PAGE CONTAINER
+========================================================== */
+.page { display: none; padding: 16px; max-width: 900px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ==========================================================
+CARDS & FIELDS
+========================================================== */
+.card {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–radius); padding: 18px; margin-bottom: 14px;
+}
+.card-title {
+font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+text-transform: uppercase; color: var(–green); margin-bottom: 14px;
+}
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.field label { display: block; font-size: 0.72rem; color: var(–text-dim); margin-bottom: 5px; }
 .field input, .field select {
-width:100%; background:var(–bg); border:1.5px solid var(–border); border-radius:8px;
-color:var(–text); font-family:‘DM Mono’,monospace; font-size:0.9rem;
-padding:10px 12px; outline:none; transition:border-color 0.2s;
--webkit-appearance:none;
+width: 100%; background: var(–bg); border: 1.5px solid var(–border);
+border-radius: var(–radius-sm); color: var(–text);
+font-family: var(–font-mono); font-size: 0.9rem;
+padding: 10px 12px; outline: none; transition: border-color 0.2s;
+-webkit-appearance: none;
 }
-.field input:focus, .field select:focus { border-color:var(–green); }
-.field select option { background:var(–bg); }
+.field input:focus, .field select:focus { border-color: var(–green); }
+.field select option { background: var(–bg); }
 
-/* ===== BIG METRICS ===== */
-.metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+/* ==========================================================
+METRIC CARDS
+========================================================== */
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
 .metric-card {
-background:var(–surface); border:1px solid var(–border); border-radius:14px;
-padding:16px; text-align:center; position:relative; overflow:hidden;
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–radius); padding: 16px; text-align: center;
+position: relative; overflow: hidden;
 }
 .metric-card::before {
-content:’’; position:absolute; top:0; left:0; right:0; height:3px;
-background:var(–green);
+content: ‘’; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+background: var(–green);
 }
-.metric-card.warn::before { background:var(–orange); }
-.metric-card.danger::before { background:var(–red); }
-.metric-card.ok::before { background:var(–green-bright); }
-.metric-label { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(–text-dim); margin-bottom:6px; }
-.metric-value { font-family:‘Bebas Neue’,sans-serif; font-size:2.8rem; line-height:1; color:var(–green-bright); }
-.metric-value.warn { color:var(–orange); }
-.metric-value.danger { color:var(–red); }
-.metric-unit { font-size:0.7rem; color:var(–text-dim); margin-top:3px; }
+.metric-card.warn::before { background: var(–orange); }
+.metric-card.danger::before { background: var(–red); }
+.metric-card.ok::before { background: var(–green-bright); }
+.metric-label {
+font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+color: var(–text-dim); margin-bottom: 6px;
+}
+.metric-value {
+font-family: var(–font-display); font-size: 2.8rem; line-height: 1;
+color: var(–green-bright);
+}
+.metric-value.warn { color: var(–orange); }
+.metric-value.danger { color: var(–red); }
+.metric-unit { font-size: 0.7rem; color: var(–text-dim); margin-top: 3px; }
 
-/* ===== GAUGE ===== */
-.gauge-wrap { margin-bottom:14px; }
-.gauge-header { display:flex; justify-content:space-between; font-size:0.72rem; color:var(–text-dim); margin-bottom:6px; }
-.gauge-track { background:var(–surface2); border-radius:20px; height:28px; overflow:hidden; position:relative; border:1px solid var(–border); }
+/* ==========================================================
+GAUGE
+========================================================== */
+.gauge-wrap { margin-bottom: 14px; }
+.gauge-header {
+display: flex; justify-content: space-between;
+font-size: 0.72rem; color: var(–text-dim); margin-bottom: 6px;
+}
+.gauge-track {
+background: var(–surface2); border-radius: 20px; height: 28px;
+overflow: hidden; position: relative; border: 1px solid var(–border);
+}
 .gauge-fill {
-height:100%; border-radius:20px; display:flex; align-items:center; justify-content:flex-end;
-padding-right:12px; transition:width 0.8s cubic-bezier(0.34,1.2,0.64,1), background 0.5s;
-min-width:2px;
+height: 100%; border-radius: 20px; display: flex; align-items: center;
+justify-content: flex-end; padding-right: 12px;
+transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1), background 0.5s;
+min-width: 2px;
 }
-.gauge-fill span { font-family:‘Bebas Neue’,sans-serif; font-size:1rem; color:white; }
-.gauge-ticks { display:flex; justify-content:space-between; margin-top:4px; }
-.gauge-tick { font-family:‘DM Mono’,monospace; font-size:0.6rem; color:var(–text-dim); }
+.gauge-fill span { font-family: var(–font-display); font-size: 1rem; color: white; }
+.gauge-ticks { display: flex; justify-content: space-between; margin-top: 4px; }
+.gauge-tick { font-family: var(–font-mono); font-size: 0.6rem; color: var(–text-dim); }
 
-/* ===== PARTNER TABLE ===== */
-.partner-list { display:flex; flex-direction:column; gap:8px; }
-.partner-row {
-background:var(–surface); border:1px solid var(–border); border-radius:10px;
-padding:12px 14px; display:flex; align-items:center; gap:10px;
-}
-.partner-name { font-weight:500; font-size:0.88rem; min-width:80px; flex-shrink:0; }
-.partner-info { flex:1; display:flex; gap:8px; flex-wrap:wrap; }
-.pinfo { font-family:‘DM Mono’,monospace; font-size:0.75rem; color:var(–text-dim); }
-.pinfo span { color:var(–text); }
-.partner-hours { font-family:‘Bebas Neue’,sans-serif; font-size:1.5rem; color:var(–green-bright); min-width:52px; text-align:right; }
-.partner-hours.warn { color:var(–orange); }
-.remove-btn { background:none; border:1px solid var(–border); border-radius:6px; color:var(–text-dim); padding:4px 8px; cursor:pointer; font-size:0.7rem; }
-.remove-btn:hover { border-color:var(–red); color:var(–red); }
-
-/* ===== ADD PARTNER FORM ===== */
-.add-form { background:var(–surface2); border:1px dashed var(–border); border-radius:12px; padding:14px; margin-bottom:14px; }
-.add-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
-
-/* ===== BUTTONS ===== */
-.btn {
-border:none; border-radius:10px; padding:12px 18px;
-font-family:‘Noto Sans JP’,sans-serif; font-size:0.85rem; font-weight:700;
-cursor:pointer; transition:all 0.15s; letter-spacing:0.05em;
-}
-.btn-primary { background:var(–green); color:white; width:100%; }
-.btn-primary:hover { background:var(–green-bright); }
-.btn-small { background:var(–surface2); color:var(–text); border:1px solid var(–border); padding:8px 14px; font-size:0.78rem; }
-.btn-small:hover { border-color:var(–green); color:var(–green-bright); }
-.btn-danger { background:transparent; color:var(–red); border:1px solid var(–red); }
-.btn-row { display:flex; gap:8px; flex-wrap:wrap; }
-
-/* ===== HISTORY ===== */
-.history-entry {
-background:var(–surface); border:1px solid var(–border); border-radius:12px;
-padding:14px; margin-bottom:10px;
-}
-.hist-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.hist-date { font-weight:700; font-size:0.9rem; }
-.hist-guide { font-family:‘DM Mono’,monospace; font-size:0.72rem; color:var(–text-dim); }
-.hist-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-.hist-metric { text-align:center; }
-.hist-val { font-family:‘Bebas Neue’,sans-serif; font-size:1.4rem; }
-.hist-val.ok { color:var(–green-bright); }
-.hist-val.warn { color:var(–orange); }
-.hist-val.danger { color:var(–red); }
-.hist-lbl { font-size:0.6rem; color:var(–text-dim); }
-.delete-hist { background:none; border:none; color:var(–text-dim); cursor:pointer; font-size:0.8rem; padding:4px 8px; }
-.delete-hist:hover { color:var(–red); }
-
-/* ===== VERDICT BANNER ===== */
+/* ==========================================================
+VERDICT BANNER
+========================================================== */
 .verdict {
-border-radius:12px; padding:14px 16px; margin-bottom:14px;
-font-size:0.88rem; font-weight:500; display:flex; gap:10px; align-items:flex-start;
-border:1.5px solid;
+border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+font-size: 0.88rem; font-weight: 500; display: flex; gap: 10px;
+align-items: flex-start; border: 1.5px solid;
 }
-.verdict.ok { background:#0D2D1A; border-color:#1A6B3A; color:#5CE88A; }
-.verdict.warn { background:#2D1E00; border-color:#7A5000; color:#FFB020; }
-.verdict.danger { background:#2D0D0D; border-color:#7A2020; color:#FF6060; }
-.verdict-icon { font-size:1.3rem; flex-shrink:0; margin-top:-2px; }
+.verdict.ok     { background: #0D2D1A; border-color: #1A6B3A; color: #5CE88A; }
+.verdict.warn   { background: #2D1E00; border-color: #7A5000; color: #FFB020; }
+.verdict.danger { background: #2D0D0D; border-color: #7A2020; color: #FF6060; }
+.verdict-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: -2px; }
 
-/* ===== SAVE SNAPSHOT BTN ===== */
-.save-btn { background:var(–gold); color:#1A1000; font-weight:700; border:none; border-radius:10px; padding:13px; width:100%; font-size:0.9rem; cursor:pointer; margin-top:4px; transition:opacity 0.2s; }
-.save-btn:hover { opacity:0.88; }
+/* ==========================================================
+PARTNER LIST
+========================================================== */
+.partner-list { display: flex; flex-direction: column; gap: 8px; }
+.partner-row {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 10px; padding: 12px 14px; display: flex;
+align-items: center; gap: 10px;
+}
+.partner-name { font-weight: 500; font-size: 0.88rem; min-width: 80px; flex-shrink: 0; }
+.partner-info { flex: 1; display: flex; gap: 8px; flex-wrap: wrap; }
+.pinfo { font-family: var(–font-mono); font-size: 0.75rem; color: var(–text-dim); }
+.pinfo span { color: var(–text); }
+.partner-hours {
+font-family: var(–font-display); font-size: 1.5rem;
+color: var(–green-bright); min-width: 52px; text-align: right;
+}
+.partner-hours.warn { color: var(–orange); }
 
-/* ===== UPDATE BADGE ===== */
-.live-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.65rem; color:var(–green-bright); background:rgba(0,216,126,0.12); border:1px solid rgba(0,216,126,0.3); border-radius:20px; padding:3px 10px; }
-.live-dot { width:6px; height:6px; background:var(–green-bright); border-radius:50%; animation:pulse 1.5s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+/* ==========================================================
+ADD PARTNER FORM
+========================================================== */
+.add-form {
+background: var(–surface2); border: 1px dashed var(–border);
+border-radius: 12px; padding: 14px; margin-bottom: 14px;
+}
+.add-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-/* ===== EMPTY STATE ===== */
-.empty { text-align:center; color:var(–text-dim); padding:40px 20px; font-size:0.85rem; }
+/* ==========================================================
+BUTTONS
+========================================================== */
+.btn {
+border: none; border-radius: 10px; padding: 12px 18px;
+font-family: var(–font-body); font-size: 0.85rem; font-weight: 700;
+cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em;
+}
+.btn-primary { background: var(–green); color: white; width: 100%; }
+.btn-primary:hover { background: var(–green-bright); }
+.btn-small {
+background: var(–surface2); color: var(–text); border: 1px solid var(–border);
+padding: 8px 14px; font-size: 0.78rem;
+}
+.btn-small:hover { border-color: var(–green); color: var(–green-bright); }
+.btn-danger { background: transparent; color: var(–red); border: 1px solid var(–red); }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.remove-btn {
+background: none; border: 1px solid var(–border); border-radius: 6px;
+color: var(–text-dim); padding: 4px 8px; cursor: pointer; font-size: 0.7rem;
+}
+.remove-btn:hover { border-color: var(–red); color: var(–red); }
+.edit-btn {
+background: none; border: 1px solid var(–green); border-radius: 6px;
+color: var(–green); padding: 4px 8px; cursor: pointer; font-size: 0.7rem;
+flex-shrink: 0;
+}
+.edit-btn:hover { background: var(–green); color: white; }
+.save-btn {
+background: var(–gold); color: #1A1000; font-weight: 700; border: none;
+border-radius: 10px; padding: 13px; width: 100%; font-size: 0.9rem;
+cursor: pointer; margin-top: 4px; transition: opacity 0.2s;
+}
+.save-btn:hover { opacity: 0.88; }
 
-/* ===== EDIT MODAL ===== */
+/* ==========================================================
+HISTORY
+========================================================== */
+.history-entry {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 12px; padding: 14px; margin-bottom: 10px;
+}
+.hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hist-date { font-weight: 700; font-size: 0.9rem; }
+.hist-guide { font-family: var(–font-mono); font-size: 0.72rem; color: var(–text-dim); }
+.hist-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.hist-metric { text-align: center; }
+.hist-val { font-family: var(–font-display); font-size: 1.4rem; }
+.hist-val.ok { color: var(–green-bright); }
+.hist-val.warn { color: var(–orange); }
+.hist-val.danger { color: var(–red); }
+.hist-lbl { font-size: 0.6rem; color: var(–text-dim); }
+.delete-hist {
+background: none; border: none; color: var(–text-dim);
+cursor: pointer; font-size: 0.8rem; padding: 4px 8px;
+}
+.delete-hist:hover { color: var(–red); }
+
+/* ==========================================================
+MODAL (single definition)
+========================================================== */
 .modal-overlay {
-display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
-z-index:200; align-items:flex-start; justify-content:center;
-padding:16px; overflow-y:auto;
+display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+z-index: 200; align-items: flex-start; justify-content: center;
+padding: 16px; overflow-y: auto;
 }
-.modal-overlay.open { display:flex; }
+.modal-overlay.open { display: flex; }
 .modal {
-background:var(–surface); border:1px solid var(–border); border-radius:16px;
-width:100%; max-width:420px; margin:auto;
-display:flex; flex-direction:column;
-animation: slideUp 0.2s ease;
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 16px; width: 100%; max-width: 420px; margin: auto;
+display: flex; flex-direction: column;
+animation: modalSlideUp 0.2s ease;
 }
-.modal-body {
-padding:24px 24px 0 24px;
+@keyframes modalSlideUp {
+from { transform: translateY(20px); opacity: 0; }
+to   { transform: translateY(0);    opacity: 1; }
 }
+.modal-body { padding: 24px 24px 0 24px; }
 .modal-footer {
-padding:16px 24px 24px 24px;
-position:sticky; bottom:0;
-background:var(–surface);
-border-top:1px solid var(–border);
-border-radius:0 0 16px 16px;
+padding: 16px 24px 24px 24px; position: sticky; bottom: 0;
+background: var(–surface); border-top: 1px solid var(–border);
+border-radius: 0 0 16px 16px;
 }
-@keyframes slideUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-.modal-title { font-size:0.88rem; font-weight:700; color:var(–green-bright); margin-bottom:14px; letter-spacing:0.05em; }
-.modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
-.modal-actions { display:flex; gap:10px; }
-.btn-save { background:var(–green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
-.btn-save:hover { background:var(–green-bright); }
-.btn-cancel { background:var(–surface2); color:var(–text-dim); border:1px solid var(–border); border-radius:10px; padding:12px; flex:1; font-size:0.88rem; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
-.edit-btn { background:none; border:1px solid var(–green); border-radius:6px; color:var(–green); padding:4px 8px; cursor:pointer; font-size:0.7rem; flex-shrink:0; }
-.edit-btn:hover { background:var(–green); color:white; }
+.modal-title {
+font-size: 0.88rem; font-weight: 700; color: var(–green-bright);
+margin-bottom: 14px; letter-spacing: 0.05em;
+}
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 10px; }
+.btn-save {
+background: var(–green); color: white; border: none; border-radius: 10px;
+padding: 12px; flex: 1; font-size: 0.88rem; font-weight: 700;
+cursor: pointer; font-family: var(–font-body);
+}
+.btn-save:hover { background: var(–green-bright); }
+.btn-cancel {
+background: var(–surface2); color: var(–text-dim); border: 1px solid var(–border);
+border-radius: 10px; padding: 12px; flex: 1; font-size: 0.88rem;
+cursor: pointer; font-family: var(–font-body);
+}
 
-/* ===== EDIT MODAL ===== */
-.modal-overlay {
-display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
-z-index:200; align-items:center; justify-content:center; padding:20px;
-}
-.modal-overlay.open { display:flex; }
-.modal {
-background:var(–surface); border:1px solid var(–border); border-radius:16px;
-padding:24px; width:100%; max-width:420px;
-animation: slideUp 0.2s ease;
-}
-@keyframes slideUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-.modal-title { font-size:0.85rem; font-weight:700; color:var(–green-bright); margin-bottom:18px; letter-spacing:0.05em; }
-.modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
-.modal-actions { display:flex; gap:10px; }
-.btn-save { background:var(–green); color:white; border:none; border-radius:10px; padding:12px; flex:1; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
-.btn-cancel { background:var(–surface2); color:var(–text-dim); border:1px solid var(–border); border-radius:10px; padding:12px; flex:1; font-size:0.88rem; cursor:pointer; font-family:‘Noto Sans JP’,sans-serif; }
-.edit-btn { background:none; border:1px solid var(–border); border-radius:6px; color:var(–green); padding:4px 8px; cursor:pointer; font-size:0.7rem; }
-.edit-btn:hover { border-color:var(–green-bright); }
+/* ==========================================================
+EMPTY STATE
+========================================================== */
+.empty { text-align: center; color: var(–text-dim); padding: 40px 20px; font-size: 0.85rem; }
 
-/* ===== RESPONSIVE ===== */
+/* ==========================================================
+RESPONSIVE
+========================================================== */
 @media (max-width: 500px) {
-.metrics-grid { grid-template-columns:1fr 1fr; }
-.row3 { grid-template-columns:1fr 1fr; }
-.hist-metrics { grid-template-columns:repeat(2,1fr); }
-.metric-value { font-size:2.2rem; }
+.metrics-grid { grid-template-columns: 1fr 1fr; }
+.row3 { grid-template-columns: 1fr 1fr; }
+.hist-metrics { grid-template-columns: repeat(2, 1fr); }
+.metric-value { font-size: 2.2rem; }
 }
 </style>
 
 </head>
 <body>
+
+<!-- ===== HEADER ===== -->
 
 <div class="header">
   <div class="header-left">
@@ -245,10 +343,12 @@ animation: slideUp 0.2s ease;
     </div>
     <div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="store-name" id="hdr-store" onclick="showTab('setup')" style="cursor:pointer;" title="タップして店舗名を変更">Labor Monitor</div>
-        <span id="hdr-store-tag" style="display:none;background:rgba(0,168,98,0.2);border:1px solid var(--green);border-radius:20px;padding:2px 10px;font-size:0.65rem;color:var(--green-bright);font-weight:700;"></span>
+        <div class="store-name" id="hdr-store" onclick="showTab('setup')" title="タップして店舗名を変更">Labor Monitor</div>
+        <span class="store-tag" id="hdr-store-tag"></span>
       </div>
-      <div class="store-sub"><span class="live-badge"><span class="live-dot"></span>LIVE</span></div>
+      <div style="font-size:0.65rem;color:var(--text-dim);margin-top:1px;">
+        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+      </div>
     </div>
   </div>
   <div class="clock-box">
@@ -257,24 +357,22 @@ animation: slideUp 0.2s ease;
   </div>
 </div>
 
+<!-- ===== TABS ===== -->
+
 <div class="tabs">
-  <div class="tab active" onclick="showTab('monitor')">📊 モニター</div>
-  <div class="tab" onclick="showTab('partners')">👥 パートナー</div>
-  <div class="tab" onclick="showTab('setup')">⚙️ 設定</div>
-  <div class="tab" onclick="showTab('history')">📅 履歴</div>
+  <div class="tab active" data-tab="monitor" onclick="showTab('monitor')">📊 モニター</div>
+  <div class="tab" data-tab="partners" onclick="showTab('partners')">👥 パートナー</div>
+  <div class="tab" data-tab="setup" onclick="showTab('setup')">⚙️ 設定</div>
+  <div class="tab" data-tab="history" onclick="showTab('history')">📅 履歴</div>
 </div>
 
 <!-- ========== MONITOR PAGE ========== -->
 
 <div class="page active" id="page-monitor">
 
-  <!-- 店舗未設定バナー -->
-
   <div id="store-setup-banner" style="display:none;border-radius:10px;padding:12px 16px;margin-bottom:12px;background:#1A2D1A;border:1.5px solid var(--green);color:var(--green-bright);font-size:0.82rem;font-weight:500;cursor:pointer;" onclick="showTab('setup')">
     ⚙️ まず店舗名を設定しましょう → <u>設定タブをタップ</u>
   </div>
-
-  <!-- 営業時間ステータスバー -->
 
   <div id="biz-status-bar" style="border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:0.82rem;font-weight:500;align-items:center;gap:8px;display:none;"></div>
 
@@ -325,15 +423,16 @@ animation: slideUp 0.2s ease;
       <div class="metric-value" id="val-diff">--</div>
       <div class="metric-unit">時間（＋超過 ／ −余剰）</div>
     </div>
+    <!-- 非オペ内訳: 6列に修正 -->
     <div class="metric-card" style="grid-column:1/-1;background:var(--surface2);">
       <div class="metric-label" style="margin-bottom:10px;">非オペ時間内訳 — ガイド比計算から除外済み ✓</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;">
-        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-break">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">休憩(h)</div></div>
-        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-meeting">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">MTG(h)</div></div>
-        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-training">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">育成(h)</div></div>
-        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-exp">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">EXP(h)</div></div>
-        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-cln">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">CLN(h)</div></div>
-        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);" id="nonope-mgt">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">MGT(h)</div></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;text-align:center;">
+        <div><div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);" id="nonope-break">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">休憩(h)</div></div>
+        <div><div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);" id="nonope-meeting">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">MTG(h)</div></div>
+        <div><div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);" id="nonope-training">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">育成(h)</div></div>
+        <div><div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);" id="nonope-exp">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">EXP(h)</div></div>
+        <div><div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);" id="nonope-cln">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">CLN(h)</div></div>
+        <div><div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);" id="nonope-mgt">0.0</div><div style="font-size:0.6rem;color:var(--text-dim);">MGT(h)</div></div>
       </div>
     </div>
   </div>
@@ -362,13 +461,13 @@ animation: slideUp 0.2s ease;
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
     <div class="card" style="margin:0;">
       <div class="metric-label" style="margin-bottom:4px;">出勤人数（退勤済含）</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);" id="val-headcount">0</div>
+      <div style="font-family:var(--font-display);font-size:2rem;color:var(--gold);" id="val-headcount">0</div>
       <div class="metric-unit">名 <span style="font-size:0.65rem;color:var(--text-dim);">退勤済 <span id="val-retired-h">0.0</span>h 加算中</span></div>
     </div>
     <div class="card" style="margin:0;">
-      <div class="metric-label" style="margin-bottom:4px;">次回更新まで</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text-dim);" id="val-countdown">5:00</div>
-      <div class="metric-unit">自動更新 (5分毎)</div>
+      <div class="metric-label" style="margin-bottom:4px;">次回フル更新まで</div>
+      <div style="font-family:var(--font-display);font-size:2rem;color:var(--text-dim);" id="val-countdown">5:00</div>
+      <div class="metric-unit">パートナー一覧再描画</div>
     </div>
   </div>
 
@@ -397,7 +496,7 @@ animation: slideUp 0.2s ease;
       </div>
       <div class="field">
         <label>退社予定時刻</label>
-        <input type="time" id="add-end" placeholder="任意">
+        <input type="time" id="add-end">
       </div>
     </div>
     <button class="btn btn-primary" onclick="addPartner()">追加する</button>
@@ -405,7 +504,7 @@ animation: slideUp 0.2s ease;
 
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
     <div class="card-title" style="margin:0;">出勤中パートナー <span id="partner-count" style="color:var(--gold);"></span></div>
-    <button onclick="clearAllPartners()" style="background:#2D0D0D;border:1.5px solid var(--red);color:var(--red);border-radius:8px;padding:7px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">🗑 全員削除</button>
+    <button onclick="clearAllPartners()" style="background:#2D0D0D;border:1.5px solid var(--red);color:var(--red);border-radius:8px;padding:7px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:var(--font-body);">🗑 全員削除</button>
   </div>
   <div class="partner-list" id="partner-list">
     <div class="empty" id="partner-empty">まだ誰も登録されていません</div>
@@ -440,7 +539,7 @@ animation: slideUp 0.2s ease;
         <input type="number" id="cfg-danger" value="115" inputmode="numeric" oninput="saveConfig()">
       </div>
       <div class="field">
-        <label>自動更新間隔 (秒)</label>
+        <label>フル更新間隔 (秒)</label>
         <input type="number" id="cfg-interval" value="300" inputmode="numeric" oninput="saveConfig()">
       </div>
     </div>
@@ -463,187 +562,343 @@ animation: slideUp 0.2s ease;
   </div>
 </div>
 
+<!-- ========== EDIT MODAL ========== -->
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-body">
+      <div class="modal-title">✏️ パートナー情報を編集</div>
+      <input type="hidden" id="edit-id">
+      <div class="modal-grid">
+        <div class="field" style="grid-column:1/-1;">
+          <label>氏名</label>
+          <input type="text" id="edit-name">
+        </div>
+        <div class="field">
+          <label>出社時刻</label>
+          <input type="time" id="edit-start">
+        </div>
+        <div class="field">
+          <label>退社予定時刻</label>
+          <input type="time" id="edit-end">
+        </div>
+        <div class="field">
+          <label>🛌 休憩 (分)</label>
+          <input type="number" id="edit-break" min="0" max="480" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>📋 ミーティング (分)</label>
+          <input type="number" id="edit-meeting" min="0" max="480" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>🌱 育成 (分)</label>
+          <input type="number" id="edit-training" min="0" max="480" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>✨ エクスペリエンス (分)</label>
+          <input type="number" id="edit-experience" min="0" max="480" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>🧹 クレリネス (分)</label>
+          <input type="number" id="edit-cleanliness" min="0" max="480" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>💼 マネジメント (分)</label>
+          <input type="number" id="edit-management" min="0" max="480" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
+        <button class="btn-save" onclick="saveEdit()">保存する</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
-//  STATE
+//  アプリケーション・ステート（単一の状態管理オブジェクト）
 // ============================================================
-let partners = [];
-let history = [];
-let config = {
-  store: '',
-  defaultGuide: 7665,
-  warnLine: 105,
-  dangerLine: 115,
-  intervalSec: 300,
+const App = {
+  // --- データ ---
+  partners: [],
+  history: [],
+  config: {
+    store: '',
+    defaultGuide: 7665,
+    warnLine: 105,
+    dangerLine: 115,
+    intervalSec: 300,
+  },
+  retiredHours: 0,
+  lastActiveDate: '', // 日付変更検知用
+
+  // --- タイマーID ---
+  _fullRefreshTimer: null,
+  _countdownTimer: null,
+  _countdownSec: 300,
+
+  // ============================================================
+  //  永続化 (localStorage)
+  // ============================================================
+  STORAGE_KEYS: {
+    partners:     'sbcj_partners',
+    history:      'sbcj_history',
+    config:       'sbcj_config',
+    retiredHours: 'sbcj_retiredHours',
+    lastDate:     'sbcj_lastActiveDate',
+    bizOpen:      'sbcj_bizOpen',
+    bizClose:     'sbcj_bizClose',
+    sales:        'sbcj_sales',
+  },
+
+  persist() {
+    try {
+      const sk = this.STORAGE_KEYS;
+      localStorage.setItem(sk.partners, JSON.stringify(this.partners));
+      localStorage.setItem(sk.history, JSON.stringify(this.history));
+      localStorage.setItem(sk.config, JSON.stringify(this.config));
+      localStorage.setItem(sk.retiredHours, String(this.retiredHours));
+      localStorage.setItem(sk.lastDate, this.lastActiveDate);
+      // 営業時間・売上もセッション跨ぎ保持
+      localStorage.setItem(sk.bizOpen, document.getElementById('mon-open').value || '');
+      localStorage.setItem(sk.bizClose, document.getElementById('mon-close').value || '');
+      localStorage.setItem(sk.sales, document.getElementById('mon-sales').value || '');
+    } catch (e) { /* QuotaExceeded等は静かに無視 */ }
+  },
+
+  load() {
+    try {
+      const sk = this.STORAGE_KEYS;
+      const p = localStorage.getItem(sk.partners);
+      const h = localStorage.getItem(sk.history);
+      const c = localStorage.getItem(sk.config);
+      if (p) this.partners = JSON.parse(p);
+      if (h) this.history = JSON.parse(h);
+      if (c) this.config = { ...this.config, ...JSON.parse(c) };
+      const r = localStorage.getItem(sk.retiredHours);
+      if (r) this.retiredHours = parseFloat(r) || 0;
+      this.lastActiveDate = localStorage.getItem(sk.lastDate) || '';
+    } catch (e) { /* 破損データは初期値で続行 */ }
+  },
+
+  // ============================================================
+  //  日付変更の自動検知 → 当日データをリセット
+  // ============================================================
+  checkDateChange() {
+    const today = new Date().toLocaleDateString('ja-JP');
+    if (this.lastActiveDate && this.lastActiveDate !== today) {
+      // 日付が変わった → パートナー・退勤蓄積・売上をリセット
+      this.partners = [];
+      this.retiredHours = 0;
+      document.getElementById('mon-sales').value = '';
+      document.getElementById('mon-open').value = '';
+      document.getElementById('mon-close').value = '';
+      console.log('[Labor Monitor] 日付変更検知 → 当日データをリセット');
+    }
+    this.lastActiveDate = today;
+    this.persist();
+  },
 };
-// 当日の営業時間（ページリロードで消える一時データ）
-let todayBizOpen = '';
-let todayBizClose = '';
-// 退勤済みパートナーの確定労働時間を蓄積
-let retiredHours = 0;
-let countdownSec = 300;
-let autoTimer = null;
-let countdownTimer = null;
 
 // ============================================================
-//  STORAGE
-// ============================================================
-function persist() {
-  try {
-    localStorage.setItem('sbcj_partners', JSON.stringify(partners));
-    localStorage.setItem('sbcj_history', JSON.stringify(history));
-    localStorage.setItem('sbcj_config', JSON.stringify(config));
-    localStorage.setItem('sbcj_retiredHours', retiredHours);
-  } catch(e) {}
-}
-function load() {
-  try {
-    const p = localStorage.getItem('sbcj_partners');
-    const h = localStorage.getItem('sbcj_history');
-    const c = localStorage.getItem('sbcj_config');
-    if (p) partners = JSON.parse(p);
-    if (h) history = JSON.parse(h);
-    if (c) config = {...config, ...JSON.parse(c)};
-    const r = localStorage.getItem('sbcj_retiredHours');
-    if (r) retiredHours = parseFloat(r) || 0;
-  } catch(e) {}
-}
-
-// ============================================================
-//  CLOCK
-// ============================================================
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    String(now.getHours()).padStart(2,'0') + ':' +
-    String(now.getMinutes()).padStart(2,'0') + ':' +
-    String(now.getSeconds()).padStart(2,'0');
-  const days = ['日','月','火','水','木','金','土'];
-  document.getElementById('date-str').textContent =
-    now.getFullYear() + '/' +
-    String(now.getMonth()+1).padStart(2,'0') + '/' +
-    String(now.getDate()).padStart(2,'0') + ' (' + days[now.getDay()] + ')';
-}
-
-// ============================================================
-//  TABS
-// ============================================================
-function showTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    const names = ['monitor','partners','setup','history'];
-    t.classList.toggle('active', names[i] === name);
-  });
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  if (name === 'history') renderHistory();
-}
-
-// ============================================================
-//  PARTNER LOGIC
+//  ユーティリティ関数
 // ============================================================
 function timeToMinutes(timeStr) {
   if (!timeStr) return null;
-  const [h, m] = timeStr.split(':').map(Number);
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return null;
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  if (isNaN(h) || isNaN(m)) return null;
   return h * 60 + m;
 }
+
 function nowMinutes() {
   const now = new Date();
   return now.getHours() * 60 + now.getMinutes();
 }
-function calcWorkedHours(p) {
-  const start = timeToMinutes(p.start);
-  if (start === null) return 0;
+
+function todayDateString() {
+  return new Date().toLocaleDateString('ja-JP');
+}
+
+// ============================================================
+//  時計
+// ============================================================
+function updateClock() {
   const now = new Date();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
-  // 退社予定時刻が設定されており、現在時刻がそれを過ぎていれば退社予定時刻で打ち止め
-  const endMin = (p.end && timeToMinutes(p.end) !== null) ? timeToMinutes(p.end) : null;
-  const effectiveNow = (endMin !== null && nowMin > endMin) ? endMin : nowMin;
-  const elapsed = Math.max(0, effectiveNow - start);
-  // 全非オペ時間（休憩＋ミーティング＋育成＋エクスペリエンス＋クレリネス＋マネジメント）を除外
-  const nonOpe = (p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0) + (p.managementMin || 0);
+  const pad = (n) => String(n).padStart(2, '0');
+  document.getElementById('clock').textContent =
+    pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  const days = ['日','月','火','水','木','金','土'];
+  document.getElementById('date-str').textContent =
+    now.getFullYear() + '/' + pad(now.getMonth() + 1) + '/' + pad(now.getDate()) +
+    ' (' + days[now.getDay()] + ')';
+}
+
+// ============================================================
+//  タブ切り替え
+// ============================================================
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  if (name === 'history') renderHistory();
+}
+
+// ============================================================
+//  パートナー計算ロジック
+// ============================================================
+
+/** 非オペ時間の合計（分） */
+function sumNonOpeMinutes(p) {
+  return (p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) +
+         (p.experienceMin || 0) + (p.cleanlinessMin || 0) + (p.managementMin || 0);
+}
+
+/** 実オペ労働時間（時間） */
+function calcWorkedHours(p) {
+  const startMin = timeToMinutes(p.start);
+  if (startMin === null) return 0;
+  const now = nowMinutes();
+  // 退社予定がありかつ現在が過ぎていれば退社時刻で打ち止め
+  const endMin = timeToMinutes(p.end);
+  const effectiveEnd = (endMin !== null && now > endMin) ? endMin : now;
+  const elapsed = Math.max(0, effectiveEnd - startMin);
+  const nonOpe = sumNonOpeMinutes(p);
   return Math.max(0, elapsed - nonOpe) / 60;
 }
+
+/** 非オペ時間（時間） */
 function calcNonOpeHours(p) {
-  return ((p.breakMin || 0) + (p.meetingMin || 0) + (p.trainingMin || 0) + (p.experienceMin || 0) + (p.cleanlinessMin || 0) + (p.managementMin || 0)) / 60;
+  return sumNonOpeMinutes(p) / 60;
 }
+
+/** 全パートナー（退勤済含む）の合計オペ時間 */
 function totalWorkedHours() {
-  return retiredHours + partners.reduce((sum, p) => sum + calcWorkedHours(p), 0);
+  return App.retiredHours + App.partners.reduce((sum, p) => sum + calcWorkedHours(p), 0);
 }
 
+// ============================================================
+//  パートナー追加・削除
+// ============================================================
 function addPartner() {
-  const name = document.getElementById('add-name').value.trim();
-  const start = document.getElementById('add-start').value;
-  const brk = parseInt(document.getElementById('add-break').value) || 0;
-  const end = document.getElementById('add-end').value;
+  const nameEl = document.getElementById('add-name');
+  const startEl = document.getElementById('add-start');
+  const breakEl = document.getElementById('add-break');
+  const endEl = document.getElementById('add-end');
+
+  const name = nameEl.value.trim();
+  const start = startEl.value;
   if (!name || !start) { alert('氏名と出社時刻は必須です'); return; }
-  const id = Date.now();
-  partners.push({ id, name, start, breakMin: brk, end });
-  document.getElementById('add-name').value = '';
-  document.getElementById('add-start').value = '';
-  document.getElementById('add-break').value = '';
-  document.getElementById('add-end').value = '';
-  persist();
+
+  const brk = Math.max(0, parseInt(breakEl.value) || 0);
+  const end = endEl.value || '';
+
+  App.partners.push({
+    id: Date.now(),
+    name,
+    start,
+    end,
+    breakMin: brk,
+    meetingMin: 0,
+    trainingMin: 0,
+    experienceMin: 0,
+    cleanlinessMin: 0,
+    managementMin: 0,
+  });
+
+  // フォームリセット
+  nameEl.value = '';
+  startEl.value = '';
+  breakEl.value = '';
+  endEl.value = '';
+
+  App.persist();
   renderPartners();
-  updateBizElapsedDisplay();
   refreshMonitor();
-  showTab('monitor'); // 登録後すぐモニター画面に戻る
+  showTab('monitor');
 }
 
+function removePartner(id) {
+  const p = App.partners.find(x => x.id === id);
+  if (p) {
+    App.retiredHours += calcWorkedHours(p);
+  }
+  App.partners = App.partners.filter(x => x.id !== id);
+  App.persist();
+  renderPartners();
+  refreshMonitor();
+}
+
+function clearAllPartners() {
+  if (!App.partners.length) { alert('出勤中のパートナーはいません'); return; }
+  if (!confirm(`出勤中の全パートナー（${App.partners.length}名）を削除しますか？`)) return;
+  // 全員の労働時間を退勤済に加算
+  App.partners.forEach(p => { App.retiredHours += calcWorkedHours(p); });
+  App.partners = [];
+  App.persist();
+  renderPartners();
+  refreshMonitor();
+}
+
+// ============================================================
+//  非オペ入力 inline（パートナー行内）
+// ============================================================
 function makeNonOpeInput(pid, field, label, val) {
   const v = val || 0;
   return `<label style="display:flex;align-items:center;gap:3px;font-size:0.68rem;color:var(--text-dim);">
     <span style="color:var(--gold);font-weight:700;">${label}</span>
     <input type="number" value="${v}"
-      style="width:44px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:0.72rem;padding:2px 5px;text-align:center;"
+      style="width:44px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--font-mono);font-size:0.72rem;padding:2px 5px;text-align:center;"
       min="0" max="480" inputmode="numeric"
       onchange="updateNonOpe(${pid},'${field}',this.value)">分
   </label>`;
 }
+
 function updateNonOpe(id, field, val) {
-  const p = partners.find(x => x.id === id);
-  if (p) { p[field] = parseInt(val) || 0; persist(); refreshMonitor(); }
-}
-function updateBreak(id, val) {
-  const p = partners.find(x => x.id === id);
-  if (p) { p.breakMin = parseInt(val) || 0; persist(); refreshMonitor(); }
-}
-
-function clearAllPartners() {
-  if (!partners.length) { alert('出勤中のパートナーはいません'); return; }
-  if (!confirm(`出勤中の全パートナー（${partners.length}名）を削除しますか？`)) return;
-  partners = [];
-  persist();
-  renderPartners();
-  refreshMonitor();
-}
-
-function removePartner(id) {
-  const p = partners.find(x => x.id === id);
+  const p = App.partners.find(x => x.id === id);
   if (p) {
-    // 退勤時点の労働時間を確定して蓄積
-    retiredHours += calcWorkedHours(p);
+    p[field] = Math.max(0, parseInt(val) || 0);
+    App.persist();
+    refreshMonitor();
   }
-  partners = partners.filter(x => x.id !== id);
-  persist();
-  renderPartners();
-  refreshMonitor();
 }
 
+// ============================================================
+//  パートナー一覧描画
+// ============================================================
 function renderPartners() {
   const list = document.getElementById('partner-list');
   const empty = document.getElementById('partner-empty');
-  document.getElementById('partner-count').textContent = partners.length ? `(${partners.length}名)` : '';
-  if (!partners.length) { empty.style.display='block'; list.innerHTML=''; list.appendChild(empty); return; }
-  empty.style.display='none';
+  const countEl = document.getElementById('partner-count');
+  countEl.textContent = App.partners.length ? `(${App.partners.length}名)` : '';
+
+  if (!App.partners.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    list.appendChild(empty);
+    return;
+  }
+
+  empty.style.display = 'none';
   list.innerHTML = '';
-  partners.forEach(p => {
+
+  App.partners.forEach(p => {
     const wh = calcWorkedHours(p);
-    const wClass = wh >= 8 ? 'warn' : '';
+    const nonOpe = calcNonOpeHours(p);
+    const whClass = wh >= 8 ? 'warn' : '';
     const row = document.createElement('div');
     row.className = 'partner-row';
     row.dataset.id = p.id;
     row.innerHTML = `
-      <div class="partner-name">${p.name}</div>
+      <div class="partner-name">${escapeHtml(p.name)}</div>
       <div class="partner-info">
         <div class="pinfo">出社 <span>${p.start}</span></div>
         ${p.end ? `<div class="pinfo">退社予定 <span>${p.end}</span></div>` : '<div class="pinfo" style="color:var(--text-dim)">退社予定 未設定</div>'}
@@ -656,31 +911,47 @@ function renderPartners() {
           ${makeNonOpeInput(p.id, 'managementMin', 'MGT', p.managementMin)}
         </div>
       </div>
-      <div class="partner-hours ${wClass}">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;">${wh.toFixed(2)}h</span><br>
-        <span style="font-size:0.6rem;color:var(--text-dim);">オペ / 非オペ ${calcNonOpeHours(p).toFixed(2)}h</span>
+      <div class="partner-hours ${whClass}">
+        <span style="font-family:var(--font-display);font-size:1.5rem;">${wh.toFixed(2)}h</span><br>
+        <span style="font-size:0.6rem;color:var(--text-dim);">オペ / 非オペ ${nonOpe.toFixed(2)}h</span>
       </div>
-      <button class="edit-btn" onclick="openEditModal(${p.id})">✏️ 編集</button>
+      <button class="edit-btn" onclick="openEditModal(${p.id})">✏️</button>
       <button class="remove-btn" onclick="removePartner(${p.id})">退勤</button>
     `;
     list.appendChild(row);
   });
 }
 
+/** パートナー行の数値だけ更新（DOM再構築なし＝高速） */
+function updatePartnerHoursOnly() {
+  document.querySelectorAll('.partner-row').forEach(row => {
+    const id = parseInt(row.dataset.id, 10);
+    const p = App.partners.find(x => x.id === id);
+    if (!p) return;
+    const wh = calcWorkedHours(p);
+    const nonOpe = calcNonOpeHours(p);
+    const hoursEl = row.querySelector('.partner-hours');
+    if (hoursEl) {
+      const color = wh >= 8 ? 'var(--orange)' : 'var(--green-bright)';
+      hoursEl.innerHTML =
+        `<span style="font-family:var(--font-display);font-size:1.5rem;color:${color};">${wh.toFixed(2)}h</span><br>` +
+        `<span style="font-size:0.6rem;color:var(--text-dim);">オペ / 非オペ ${nonOpe.toFixed(2)}h</span>`;
+    }
+  });
+}
+
 // ============================================================
-//  BUSINESS TIME HELPERS
+//  営業時間ヘルパー
 // ============================================================
 function getBizElapsedHours() {
   const openVal = document.getElementById('mon-open').value;
-  const closeVal = document.getElementById('mon-close').value;
   if (!openVal) return null;
-  const now = new Date();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const closeVal = document.getElementById('mon-close').value;
   const openMin = timeToMinutes(openVal);
+  const now = nowMinutes();
   const closeMin = closeVal ? timeToMinutes(closeVal) : null;
-
-  if (nowMin < openMin) return 0; // まだ開店前
-  const effectiveNow = (closeMin && nowMin > closeMin) ? closeMin : nowMin;
+  if (now < openMin) return 0;
+  const effectiveNow = (closeMin !== null && now > closeMin) ? closeMin : now;
   return Math.max(0, (effectiveNow - openMin) / 60);
 }
 
@@ -696,115 +967,89 @@ function updateBizElapsedDisplay() {
     return;
   }
 
-  const elapsed = getBizElapsedHours();
+  const elapsed = getBizElapsedHours() || 0;
   const h = Math.floor(elapsed);
   const m = Math.round((elapsed - h) * 60);
-  elapsedEl.textContent = `${h}h ${String(m).padStart(2,'0')}m`;
+  elapsedEl.textContent = `${h}h ${String(m).padStart(2, '0')}m`;
 
-  const now = new Date();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const now = nowMinutes();
   const openMin = timeToMinutes(openVal);
   const closeMin = closeVal ? timeToMinutes(closeVal) : null;
 
   statusBar.style.display = 'flex';
-  if (nowMin < openMin) {
-    statusBar.style.background = '#1A2D3A';
-    statusBar.style.border = '1.5px solid #2A5080';
-    statusBar.style.color = '#7ABCD0';
+  if (now < openMin) {
+    statusBar.style.cssText += 'background:#1A2D3A;border:1.5px solid #2A5080;color:#7ABCD0;display:flex;';
     statusBar.innerHTML = '⏳ 開店前です — 営業開始を待っています';
-  } else if (closeMin && nowMin >= closeMin) {
-    statusBar.style.background = '#1A1A2D';
-    statusBar.style.border = '1.5px solid #3A3A7A';
-    statusBar.style.color = '#9090D0';
+  } else if (closeMin && now >= closeMin) {
+    statusBar.style.cssText += 'background:#1A1A2D;border:1.5px solid #3A3A7A;color:#9090D0;display:flex;';
     statusBar.innerHTML = `🌙 営業終了 — 本日の営業時間: ${openVal} 〜 ${closeVal}`;
   } else {
-    statusBar.style.background = '#0D2D1A';
-    statusBar.style.border = '1.5px solid #1A6B3A';
-    statusBar.style.color = '#5CE88A';
-    const totalMin = closeMin ? closeMin - openMin : null;
-    const remainMin = closeMin ? closeMin - nowMin : null;
-    statusBar.innerHTML = `🟢 営業中 ${openVal}〜${closeVal || '?'} ` +
-      (remainMin !== null ? ` — 残り約 ${Math.floor(remainMin/60)}h${remainMin%60}m` : '');
+    statusBar.style.cssText += 'background:#0D2D1A;border:1.5px solid #1A6B3A;color:#5CE88A;display:flex;';
+    const remainMin = closeMin ? closeMin - now : null;
+    const remainStr = remainMin !== null
+      ? ` — 残り約 ${Math.floor(remainMin / 60)}h${remainMin % 60}m`
+      : '';
+    statusBar.innerHTML = `🟢 営業中 ${openVal}〜${closeVal || '?'}${remainStr}`;
   }
 }
 
 function onBizTimeChange() {
   updateBizElapsedDisplay();
   refreshMonitor();
+  App.persist();
 }
 
 // ============================================================
-//  PARTNER HOURS FAST UPDATE (DOM再構築なし)
-// ============================================================
-function updatePartnerHoursOnly() {
-  const rows = document.querySelectorAll('.partner-row');
-  rows.forEach(row => {
-    const id = parseInt(row.dataset.id);
-    const p = partners.find(x => x.id === id);
-    if (!p) return;
-    const wh = calcWorkedHours(p);
-    const nonOpe = calcNonOpeHours(p);
-    const hoursEl = row.querySelector('.partner-hours');
-    if (hoursEl) {
-      hoursEl.innerHTML = `<span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:${wh >= 8 ? 'var(--orange)' : 'var(--green-bright)'};">${wh.toFixed(2)}h</span><br><span style="font-size:0.6rem;color:var(--text-dim);">オペ / 非オペ ${nonOpe.toFixed(2)}h</span>`;
-    }
-  });
-}
-
-// ============================================================
-//  MONITOR REFRESH
+//  モニター更新（コア計算）
 // ============================================================
 function refreshMonitor() {
   const salesVal = parseFloat(document.getElementById('mon-sales').value) || 0;
-  const guideVal = parseFloat(document.getElementById('mon-guide').value) || config.defaultGuide;
+  const guideVal = parseFloat(document.getElementById('mon-guide').value) || App.config.defaultGuide;
   const actual = totalWorkedHours();
 
-  // 営業経過時間ベースでガイド時間を算出
-  const bizElapsed = getBizElapsedHours();
-  let guideH = 0;
-  if (guideVal > 0 && salesVal > 0) {
-    guideH = salesVal / guideVal;
-  }
-
+  // ガイド時間 = 売上 ÷ ガイド単価
+  const guideH = (guideVal > 0 && salesVal > 0) ? salesVal / guideVal : 0;
   const ratio = guideH > 0 ? (actual / guideH) * 100 : 0;
   const diff = actual - guideH;
 
-  // Colors
-  const rc = ratio >= config.dangerLine ? 'danger' : ratio >= config.warnLine ? 'warn' : 'ok';
+  // ステータス判定
+  const rc = ratio >= App.config.dangerLine ? 'danger'
+           : ratio >= App.config.warnLine   ? 'warn'
+           : 'ok';
 
-  // Values
+  // --- 値の表示 ---
   document.getElementById('val-guide-h').textContent = guideH > 0 ? guideH.toFixed(2) : '--';
   document.getElementById('val-actual-h').textContent = actual.toFixed(2);
   document.getElementById('val-ratio').textContent = ratio > 0 ? ratio.toFixed(1) + '%' : '--%';
+
   const diffEl = document.getElementById('val-diff');
   diffEl.textContent = guideH > 0 ? (diff >= 0 ? '+' : '') + diff.toFixed(2) : '--';
   diffEl.className = 'metric-value ' + (diff > 0 ? 'danger' : 'ok');
 
-  document.getElementById('val-headcount').textContent = partners.length;
-  document.getElementById('val-retired-h').textContent = retiredHours.toFixed(2);
+  document.getElementById('val-headcount').textContent = App.partners.length;
+  document.getElementById('val-retired-h').textContent = App.retiredHours.toFixed(2);
 
-  // 非オペ時間内訳を集計して表示
-  const nonOpeBreak    = partners.reduce((s,p) => s + (p.breakMin||0), 0) / 60;
-  const nonOpeMeeting  = partners.reduce((s,p) => s + (p.meetingMin||0), 0) / 60;
-  const nonOpeTraining = partners.reduce((s,p) => s + (p.trainingMin||0), 0) / 60;
-  const nonOpeExp      = partners.reduce((s,p) => s + (p.experienceMin||0), 0) / 60;
-  const nonOpeCln      = partners.reduce((s,p) => s + (p.cleanlinessMin||0), 0) / 60;
-  document.getElementById('nonope-break').textContent    = nonOpeBreak.toFixed(1);
-  document.getElementById('nonope-meeting').textContent  = nonOpeMeeting.toFixed(1);
-  document.getElementById('nonope-training').textContent = nonOpeTraining.toFixed(1);
-  document.getElementById('nonope-exp').textContent      = nonOpeExp.toFixed(1);
-  document.getElementById('nonope-cln').textContent      = nonOpeCln.toFixed(1);
-  const nonOpeMgt = partners.reduce((s,p) => s + (p.managementMin||0), 0) / 60;
-  document.getElementById('nonope-mgt').textContent = nonOpeMgt.toFixed(1);
+  // --- 非オペ内訳集計 ---
+  const fields = [
+    ['breakMin',       'nonope-break'],
+    ['meetingMin',     'nonope-meeting'],
+    ['trainingMin',    'nonope-training'],
+    ['experienceMin',  'nonope-exp'],
+    ['cleanlinessMin', 'nonope-cln'],
+    ['managementMin',  'nonope-mgt'],
+  ];
+  fields.forEach(([key, elId]) => {
+    const total = App.partners.reduce((s, p) => s + (p[key] || 0), 0) / 60;
+    document.getElementById(elId).textContent = total.toFixed(1);
+  });
 
-  // Card colors
-  ['mc-ratio','mc-diff'].forEach(id => {
-    const el = document.getElementById(id);
-    el.className = 'metric-card ' + rc;
+  // --- カード色 ---
+  ['mc-ratio', 'mc-diff'].forEach(id => {
+    document.getElementById(id).className = 'metric-card ' + rc;
   });
   document.getElementById('val-ratio').className = 'metric-value ' + rc;
 
-  // Gauge
+  // --- ゲージ ---
   const gaugePct = Math.min(ratio / 150 * 100, 100);
   const gFill = document.getElementById('gauge-mon');
   const gColor = rc === 'danger' ? 'var(--red)' : rc === 'warn' ? 'var(--orange)' : 'var(--green-bright)';
@@ -813,101 +1058,133 @@ function refreshMonitor() {
   document.getElementById('gauge-mon-label').textContent = ratio > 0 ? ratio.toFixed(1) + '%' : '';
   document.getElementById('gauge-text-mon').textContent = ratio > 0 ? ratio.toFixed(1) + '%' : '--';
 
-  // Verdict
+  // --- 判定バナー ---
   let verdict = '';
-  if (ratio <= 0) {
-    verdict = '';
-  } else if (ratio < config.warnLine) {
-    verdict = `<div class="verdict ok"><span class="verdict-icon">✅</span>ガイド比 ${ratio.toFixed(1)}% — 適正範囲内です。労働時間がガイドを下回っています。</div>`;
-  } else if (ratio < config.dangerLine) {
-    verdict = `<div class="verdict warn"><span class="verdict-icon">⚠️</span>ガイド比 ${ratio.toFixed(1)}% — 注意ライン超過。約 ${Math.abs(diff).toFixed(1)} 時間分の超過です。休憩調整や早上がりを検討してください。</div>`;
-  } else {
-    verdict = `<div class="verdict danger"><span class="verdict-icon">🔴</span>ガイド比 ${ratio.toFixed(1)}% — 危険ライン超過！${Math.abs(diff).toFixed(1)} 時間分の過剰労働です。早急な人員調整が必要です。</div>`;
+  if (ratio > 0) {
+    if (ratio < App.config.warnLine) {
+      verdict = `<div class="verdict ok"><span class="verdict-icon">✅</span>ガイド比 ${ratio.toFixed(1)}% — 適正範囲内です。労働時間がガイドを下回っています。</div>`;
+    } else if (ratio < App.config.dangerLine) {
+      verdict = `<div class="verdict warn"><span class="verdict-icon">⚠️</span>ガイド比 ${ratio.toFixed(1)}% — 注意ライン超過。約 ${Math.abs(diff).toFixed(1)} 時間分の超過です。休憩調整や早上がりを検討してください。</div>`;
+    } else {
+      verdict = `<div class="verdict danger"><span class="verdict-icon">🔴</span>ガイド比 ${ratio.toFixed(1)}% — 危険ライン超過！${Math.abs(diff).toFixed(1)} 時間分の過剰労働です。早急な人員調整が必要です。</div>`;
+    }
   }
   document.getElementById('verdict-mon').innerHTML = verdict;
 }
 
 // ============================================================
-//  AUTO REFRESH (5 min)
+//  タイマー管理
+//  - 毎秒: 時計 + 営業経過 + 数値更新（軽量DOM操作のみ）
+//  - N秒毎: フル再描画（パートナー一覧のDOM再構築）
 // ============================================================
-function startAutoRefresh() {
-  countdownSec = config.intervalSec;
-  clearInterval(autoTimer);
-  clearInterval(countdownTimer);
-  autoTimer = setInterval(() => {
+function startTimers() {
+  const intervalSec = App.config.intervalSec || 300;
+  App._countdownSec = intervalSec;
+
+  clearInterval(App._fullRefreshTimer);
+  clearInterval(App._countdownTimer);
+
+  // フル更新タイマー
+  App._fullRefreshTimer = setInterval(() => {
+    App.checkDateChange();
     renderPartners();
     refreshMonitor();
-    countdownSec = config.intervalSec;
-  }, config.intervalSec * 1000);
-  countdownTimer = setInterval(() => {
-    countdownSec = Math.max(0, countdownSec - 1);
-    const m = Math.floor(countdownSec / 60);
-    const s = countdownSec % 60;
+    App.persist();
+    App._countdownSec = intervalSec;
+  }, intervalSec * 1000);
+
+  // 毎秒タイマー（軽量処理のみ）
+  App._countdownTimer = setInterval(() => {
+    updateClock();
+    updateBizElapsedDisplay();
+    refreshMonitor();
+    updatePartnerHoursOnly();
+
+    // カウントダウン表示
+    App._countdownSec = Math.max(0, App._countdownSec - 1);
+    const m = Math.floor(App._countdownSec / 60);
+    const s = App._countdownSec % 60;
     document.getElementById('val-countdown').textContent =
-      String(m).padStart(1,'0') + ':' + String(s).padStart(2,'0');
+      String(m) + ':' + String(s).padStart(2, '0');
   }, 1000);
 }
 
 // ============================================================
-//  SNAPSHOT / HISTORY
+//  スナップショット保存 / 履歴
 // ============================================================
 function saveSnapshot() {
   const sales = parseFloat(document.getElementById('mon-sales').value) || 0;
-  const guide = parseFloat(document.getElementById('mon-guide').value) || config.defaultGuide;
+  const guide = parseFloat(document.getElementById('mon-guide').value) || App.config.defaultGuide;
   const actual = totalWorkedHours();
-  const guideH = guide > 0 ? sales / guide : 0;
+  const guideH = guide > 0 && sales > 0 ? sales / guide : 0;
   const ratio = guideH > 0 ? (actual / guideH) * 100 : 0;
   const now = new Date();
+
   const snap = {
     id: Date.now(),
     date: now.toLocaleDateString('ja-JP'),
-    time: now.toLocaleTimeString('ja-JP', {hour:'2-digit',minute:'2-digit'}),
-    sales, guide, guideH: guideH.toFixed(2), actual: actual.toFixed(2),
-    ratio: ratio.toFixed(1), headcount: partners.length,
-    partnerNames: partners.map(p => p.name).join(', ')
+    time: now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+    sales,
+    guide,
+    guideH: guideH.toFixed(2),
+    actual: actual.toFixed(2),
+    ratio: ratio.toFixed(1),
+    headcount: App.partners.length,
+    partnerNames: App.partners.map(p => p.name).join(', '),
   };
-  history.unshift(snap);
-  if (history.length > 200) history = history.slice(0, 200);
-  persist();
+
+  App.history.unshift(snap);
+  if (App.history.length > 200) App.history = App.history.slice(0, 200);
+  App.persist();
   alert(`保存しました！\nガイド比: ${ratio.toFixed(1)}%`);
 }
 
 function renderHistory() {
   const list = document.getElementById('history-list');
   const empty = document.getElementById('history-empty');
-  if (!history.length) { list.innerHTML=''; list.appendChild(empty); return; }
+  if (!App.history.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    list.appendChild(empty);
+    return;
+  }
   empty.style.display = 'none';
   list.innerHTML = '';
-  // Group by date
+
+  // 日付ごとにグルーピング
   const grouped = {};
-  history.forEach(h => {
+  App.history.forEach(h => {
     if (!grouped[h.date]) grouped[h.date] = [];
     grouped[h.date].push(h);
   });
+
   Object.entries(grouped).forEach(([date, entries]) => {
     const dateHeader = document.createElement('div');
     dateHeader.style.cssText = 'font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin:16px 0 8px;padding:0 4px;';
     dateHeader.textContent = date;
     list.appendChild(dateHeader);
+
     entries.forEach(h => {
-      const rc = parseFloat(h.ratio) >= config.dangerLine ? 'danger' : parseFloat(h.ratio) >= config.warnLine ? 'warn' : 'ok';
+      const rc = parseFloat(h.ratio) >= App.config.dangerLine ? 'danger'
+               : parseFloat(h.ratio) >= App.config.warnLine   ? 'warn'
+               : 'ok';
       const el = document.createElement('div');
       el.className = 'history-entry';
       el.innerHTML = `
         <div class="hist-header">
           <div>
-            <div class="hist-date">${h.date} ${h.time}</div>
-            <div class="hist-guide">ガイド単価 ¥${h.guide?.toLocaleString()} ／ 出勤 ${h.headcount}名</div>
+            <div class="hist-date">${escapeHtml(h.date)} ${escapeHtml(h.time)}</div>
+            <div class="hist-guide">ガイド単価 ¥${Number(h.guide || 0).toLocaleString()} ／ 出勤 ${h.headcount}名</div>
           </div>
           <button class="delete-hist" onclick="deleteHistory(${h.id})">✕</button>
         </div>
         <div class="hist-metrics">
-          <div class="hist-metric"><div class="hist-val" style="color:var(--text)">¥${(h.sales||0).toLocaleString()}</div><div class="hist-lbl">売上</div></div>
+          <div class="hist-metric"><div class="hist-val" style="color:var(--text)">¥${Number(h.sales || 0).toLocaleString()}</div><div class="hist-lbl">売上</div></div>
           <div class="hist-metric"><div class="hist-val">${h.guideH}h</div><div class="hist-lbl">ガイド時間</div></div>
           <div class="hist-metric"><div class="hist-val">${h.actual}h</div><div class="hist-lbl">実労働時間</div></div>
           <div class="hist-metric"><div class="hist-val ${rc}">${h.ratio}%</div><div class="hist-lbl">ガイド比</div></div>
         </div>
-        ${h.partnerNames ? `<div style="margin-top:8px;font-size:0.7rem;color:var(--text-dim);">出勤: ${h.partnerNames}</div>` : ''}
+        ${h.partnerNames ? `<div style="margin-top:8px;font-size:0.7rem;color:var(--text-dim);">出勤: ${escapeHtml(h.partnerNames)}</div>` : ''}
       `;
       list.appendChild(el);
     });
@@ -915,75 +1192,82 @@ function renderHistory() {
 }
 
 function deleteHistory(id) {
-  history = history.filter(h => h.id !== id);
-  persist();
+  App.history = App.history.filter(h => h.id !== id);
+  App.persist();
   renderHistory();
 }
 
 // ============================================================
-//  CONFIG
+//  設定
 // ============================================================
 function saveConfig() {
-  config.store = document.getElementById('cfg-store').value || '店舗名';
-  config.defaultGuide = parseFloat(document.getElementById('cfg-guide').value) || 7665;
-  config.warnLine = parseFloat(document.getElementById('cfg-warn').value) || 105;
-  config.dangerLine = parseFloat(document.getElementById('cfg-danger').value) || 115;
-  config.intervalSec = parseInt(document.getElementById('cfg-interval').value) || 300;
+  App.config.store        = document.getElementById('cfg-store').value || '';
+  App.config.defaultGuide = parseFloat(document.getElementById('cfg-guide').value) || 7665;
+  App.config.warnLine     = parseFloat(document.getElementById('cfg-warn').value) || 105;
+  App.config.dangerLine   = parseFloat(document.getElementById('cfg-danger').value) || 115;
+  App.config.intervalSec  = parseInt(document.getElementById('cfg-interval').value, 10) || 300;
   updateStoreHeader();
-  persist();
-  startAutoRefresh();
+  App.persist();
+  startTimers(); // 間隔変更を即時反映
   refreshMonitor();
 }
 
 function updateStoreHeader() {
   const tag = document.getElementById('hdr-store-tag');
   const banner = document.getElementById('store-setup-banner');
-  if (config.store) {
-    tag.textContent = config.store;
-    tag.style.display = 'inline';
+  if (App.config.store) {
+    tag.textContent = App.config.store;
+    tag.classList.add('visible');
     if (banner) banner.style.display = 'none';
   } else {
-    tag.style.display = 'none';
+    tag.classList.remove('visible');
     if (banner) banner.style.display = 'block';
   }
 }
 
+// ============================================================
+//  データ管理
+// ============================================================
 function exportData() {
   const rows = ['日付,時刻,売上,ガイド単価,ガイド時間,実労働時間,ガイド比(%),出勤人数,パートナー'];
-  history.forEach(h => {
-    rows.push([h.date, h.time, h.sales, h.guide, h.guideH, h.actual, h.ratio, h.headcount, `"${h.partnerNames||''}"`].join(','));
+  App.history.forEach(h => {
+    rows.push([h.date, h.time, h.sales, h.guide, h.guideH, h.actual, h.ratio, h.headcount, `"${(h.partnerNames || '').replace(/"/g, '""')}"`].join(','));
   });
-  const blob = new Blob(['\uFEFF' + rows.join('\n')], {type:'text/csv;charset=utf-8'});
+  const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'sbcj_labor_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.href = url;
+  a.download = 'labor_monitor_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click();
+  URL.revokeObjectURL(url);
 }
 
 function clearToday() {
   if (!confirm('本日のパートナーデータをリセットしますか？')) return;
-  partners = [];
-  retiredHours = 0;
+  App.partners = [];
+  App.retiredHours = 0;
   document.getElementById('mon-sales').value = '';
-  persist();
+  App.persist();
   renderPartners();
   refreshMonitor();
 }
 
 function clearAll() {
   if (!confirm('全データ（履歴含む）を削除しますか？この操作は元に戻せません。')) return;
-  partners = []; history = []; retiredHours = 0;
-  persist();
+  App.partners = [];
+  App.history = [];
+  App.retiredHours = 0;
+  App.persist();
   renderPartners();
   refreshMonitor();
   renderHistory();
 }
 
 // ============================================================
-//  EDIT MODAL
+//  編集モーダル
 // ============================================================
 function openEditModal(id) {
-  const p = partners.find(x => x.id === id);
+  const p = App.partners.find(x => x.id === id);
   if (!p) return;
   document.getElementById('edit-id').value = id;
   document.getElementById('edit-name').value = p.name;
@@ -1003,59 +1287,68 @@ function closeEditModal() {
 }
 
 function saveEdit() {
-  const id = parseInt(document.getElementById('edit-id').value);
+  const id = parseInt(document.getElementById('edit-id').value, 10);
   const name = document.getElementById('edit-name').value.trim();
   const start = document.getElementById('edit-start').value;
-  const end = document.getElementById('edit-end').value;
-  const brk = parseInt(document.getElementById('edit-break').value) || 0;
   if (!name || !start) { alert('氏名と出社時刻は必須です'); return; }
-  const p = partners.find(x => x.id === id);
+
+  const p = App.partners.find(x => x.id === id);
   if (p) {
-    p.name = name;
-    p.start = start;
-    p.end = end;
-    p.breakMin = brk;
-    p.meetingMin = parseInt(document.getElementById('edit-meeting').value) || 0;
-    p.trainingMin = parseInt(document.getElementById('edit-training').value) || 0;
-    p.experienceMin = parseInt(document.getElementById('edit-experience').value) || 0;
-    p.cleanlinessMin = parseInt(document.getElementById('edit-cleanliness').value) || 0;
-    p.managementMin = parseInt(document.getElementById('edit-management').value) || 0;
-    persist();
+    p.name            = name;
+    p.start           = start;
+    p.end             = document.getElementById('edit-end').value || '';
+    p.breakMin        = Math.max(0, parseInt(document.getElementById('edit-break').value) || 0);
+    p.meetingMin      = Math.max(0, parseInt(document.getElementById('edit-meeting').value) || 0);
+    p.trainingMin     = Math.max(0, parseInt(document.getElementById('edit-training').value) || 0);
+    p.experienceMin   = Math.max(0, parseInt(document.getElementById('edit-experience').value) || 0);
+    p.cleanlinessMin  = Math.max(0, parseInt(document.getElementById('edit-cleanliness').value) || 0);
+    p.managementMin   = Math.max(0, parseInt(document.getElementById('edit-management').value) || 0);
+    App.persist();
     renderPartners();
-    updateBizElapsedDisplay();
     refreshMonitor();
   }
   closeEditModal();
 }
 
 // ============================================================
-//  INIT
+//  XSS対策ユーティリティ
+// ============================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(str).replace(/[&<>"']/g, c => map[c]);
+}
+
+// ============================================================
+//  初期化
 // ============================================================
 window.addEventListener('DOMContentLoaded', () => {
-  load();
-  // Apply config to UI
-  document.getElementById('cfg-store').value = config.store;
-  document.getElementById('cfg-guide').value = config.defaultGuide;
-  document.getElementById('cfg-warn').value = config.warnLine;
-  document.getElementById('cfg-danger').value = config.dangerLine;
-  document.getElementById('cfg-interval').value = config.intervalSec;
-  updateStoreHeader();
-  document.getElementById('mon-guide').value = config.defaultGuide;
+  App.load();
+  App.checkDateChange();
 
-  setInterval(updateClock, 1000);
+  // UIに設定を反映
+  document.getElementById('cfg-store').value    = App.config.store;
+  document.getElementById('cfg-guide').value    = App.config.defaultGuide;
+  document.getElementById('cfg-warn').value     = App.config.warnLine;
+  document.getElementById('cfg-danger').value   = App.config.dangerLine;
+  document.getElementById('cfg-interval').value = App.config.intervalSec;
+  document.getElementById('mon-guide').value    = App.config.defaultGuide;
+
+  // 前回の営業時間・売上を復元（同日のみ）
+  const sk = App.STORAGE_KEYS;
+  const savedOpen  = localStorage.getItem(sk.bizOpen) || '';
+  const savedClose = localStorage.getItem(sk.bizClose) || '';
+  const savedSales = localStorage.getItem(sk.sales) || '';
+  document.getElementById('mon-open').value  = savedOpen;
+  document.getElementById('mon-close').value = savedClose;
+  document.getElementById('mon-sales').value = savedSales;
+
+  updateStoreHeader();
   updateClock();
   renderPartners();
   updateBizElapsedDisplay();
   refreshMonitor();
-  startAutoRefresh();
-
-  // 労働時間は5秒ごとにリアルタイム更新
-  setInterval(() => {
-    updateBizElapsedDisplay();
-    refreshMonitor();
-  }, 1000);
-  // パートナー行の労働時間数字だけ毎秒更新（DOM再構築なし）
-  setInterval(updatePartnerHoursOnly, 1000);
+  startTimers();
 
   // モーダル外タップで閉じる
   document.getElementById('edit-modal').addEventListener('click', function(e) {
@@ -1063,61 +1356,6 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
-<!-- ========== EDIT MODAL ========== -->
-
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal">
-    <div class="modal-body">
-    <div class="modal-title">✏️ パートナー情報を編集</div>
-    <input type="hidden" id="edit-id">
-    <div class="modal-grid">
-      <div class="field" style="grid-column:1/-1;">
-        <label>氏名</label>
-        <input type="text" id="edit-name">
-      </div>
-      <div class="field">
-        <label>出社時刻</label>
-        <input type="time" id="edit-start">
-      </div>
-      <div class="field">
-        <label>退社予定時刻</label>
-        <input type="time" id="edit-end">
-      </div>
-      <div class="field">
-        <label>🛌 休憩 (分)</label>
-        <input type="number" id="edit-break" min="0" max="480" inputmode="numeric">
-      </div>
-      <div class="field">
-        <label>📋 ミーティング (分)</label>
-        <input type="number" id="edit-meeting" min="0" max="480" inputmode="numeric">
-      </div>
-      <div class="field">
-        <label>🌱 育成 (分)</label>
-        <input type="number" id="edit-training" min="0" max="480" inputmode="numeric">
-      </div>
-      <div class="field">
-        <label>✨ エクスペリエンス (分)</label>
-        <input type="number" id="edit-experience" min="0" max="480" inputmode="numeric">
-      </div>
-      <div class="field">
-        <label>🧹 クレリネス (分)</label>
-        <input type="number" id="edit-cleanliness" min="0" max="480" inputmode="numeric">
-      </div>
-      <div class="field">
-        <label>💼 マネジメント (分)</label>
-        <input type="number" id="edit-management" min="0" max="480" inputmode="numeric">
-      </div>
-    </div>
-    </div><!-- /.modal-body -->
-    <div class="modal-footer">
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
-      <button class="btn-save" onclick="saveEdit()">保存する</button>
-    </div>
-    </div><!-- /.modal-footer -->
-  </div>
-</div>
 
 </body>
 </html>
